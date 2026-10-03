@@ -300,3 +300,8 @@ __pycache__/
 !/TrafficMonitor/language/*.ini
 *.diagsession
 enc_temp*
+
+# 로컬 의존성 복원과 Graphify 결과물
+/.build/
+/.graphify/
+/.docs/

@@ -1,4 +1,4 @@
-REM Êä³öµ±Ç°ÈÕÆÚºÍÊ±¼ä£¬²¢±£´æµ½compile_time.txtÎÄ¼þÖÐ
-del /F /Q compile_time.txt
-echo %date:~0,10% >> compile_time.txt
-echo %time:~0,8% >> compile_time.txt
+@echo off
+REM ê¸°ì¡´ íŒŒì¼ ì‚­ì œ ì—†ì´ í˜„ìž¬ ë¹Œë“œ ì‹œê°ì„ ê¸°ë¡í•œë‹¤.
+>compile_time.txt echo %date:~0,10%
+>>compile_time.txt echo %time:~0,8%

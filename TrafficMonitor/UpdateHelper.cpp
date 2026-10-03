@@ -18,17 +18,18 @@ void CUpdateHelper::SetUpdateSource(UpdateSource update_source)
     m_update_source = update_source;
 }
 
+/// <summary>보안 수정 저장소의 매니페스트에서 업데이트 정보를 가져온다.</summary>
 bool CUpdateHelper::CheckForUpdate()
 {
     wstring version_info;
     //使用GitHub更新源
     if (m_update_source == UpdateSource::GitHubSource)
     {
-        if (CCommon::GetURL(L"https://raw.githubusercontent.com/zhongyang219/TrafficMonitor/master/version_utf8.info", version_info, true))     //获取版本信息
+        if (CCommon::GetURL(L"https://raw.githubusercontent.com/Jeon-JongChan/TrafficMonitor_SecurityFix/master/version_utf8.info", version_info, true))
         {
             m_row_data = true;
         }
-        else if (CCommon::GetURL(L"https://github.com/zhongyang219/TrafficMonitor/blob/master/version_utf8.info", version_info, true))      //获取版本信息
+        else if (CCommon::GetURL(L"https://github.com/Jeon-JongChan/TrafficMonitor_SecurityFix/blob/master/version_utf8.info", version_info, true))
         {
             m_row_data = false;
         }
@@ -53,8 +54,10 @@ bool CUpdateHelper::CheckForUpdate()
     //使用Gitee更新源
     else
     {
-        if (!CCommon::GetURL(L"https://gitee.com/zhongyang219/TrafficMonitor/raw/master/version_utf8.info", version_info, true))     //获取版本信息
+        // 원본 배포판으로 돌아가 WinRing0가 다시 포함되지 않도록 같은 포크를 조회한다.
+        if (!CCommon::GetURL(L"https://raw.githubusercontent.com/Jeon-JongChan/TrafficMonitor_SecurityFix/master/version_utf8.info", version_info, true))
             return false;
+        m_row_data = true;
     }
 
     ParseUpdateInfo(version_info);

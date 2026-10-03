@@ -1,4 +1,18 @@
-<version>1.86</version>
-<link>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.86/TrafficMonitor_V1.86_x86_Lite.zip</link>
-<link_x64>https://gitee.com/zhongyang219/TrafficMonitor/releases/download/V1.86/TrafficMonitor_V1.86_x64_Lite.zip</link_x64>
-<contents>ÐÂÔöÈÎÎñÀ¸´°¿ÚÏÔÊ¾ÔÚ¸±ÏÔÊ¾Æ÷µÄ¹¦ÄÜ¡£\n¶àÓïÑÔ´úÂëÖØ¹¹£¬¶àÓïÑÔ×Ö·û´®ÔÚÍâ²¿iniÎÄ¼þÖÐÅäÖÃ£¬·½±ã³ÌÐò±¾µØ»¯¡£ÐÂÔöµÂÓï¡¢Òâ´óÀûÓï¡¢¶íÓï¡¢²¨À¼Óï¡¢°ÍÎ÷ÆÏÌÑÑÀÓï¡¢ÍÁ¶úÆäÓï¡¢Ï£²®À´ÓïµÈÓïÑÔµÄÖ§³Ö¡£\n¸ü»»Æ¤·ô½çÃæÆ¤·ôÁÐ±í¿Ø¼þ¸ÄÎªListBox¡£\nÑ¡ÏîÉèÖÃ¶Ô»°¿òÖÐµÄ¿Ø¼þÖ§³Ö¶¯Ì¬µ÷Õû´óÐ¡¡£\nÑ¡ÏîÉèÖÃ¶Ô»°¿òµ÷Õû´óÐ¡Ê±£¬´¹Ö±¹ö¶¯Ìõ²»ÔÙ¸´Î»¡£\nÈÎÎñÀ¸´°¿ÚÏÔÊ¾ÏîÄ¿¿í¶ÈÖ§³Ö¶¯Ì¬µ÷Õû¡£\nÐÂÔöÈÎÎñÀ¸×ÊÔ´Õ¼ÓÃÍ¼±³¾°ÑÕÉ«¸úËæWindowsÖ÷ÌâÑÕÉ«µÄ¹¦ÄÜ¡£\nÐÂÔöÃ¿¸öÆ¤·ôµÄ×ÖÌå¡¢ÎÄ±¾ÑÕÉ«¡¢ÏÔÊ¾ÎÄ±¾µ¥¶À±£´æµÄ¹¦ÄÜ¡£\nÏÔÊ¾ÎÄ±¾ÉèÖÃ¶Ô»°¿òÖÐÔö¼ÓÓÒ¼ü²Ëµ¥£¬ÔÊÐíÎªµ¥¶ÀµÄÏîÄ¿»Ö¸´Ä¬ÈÏ¡£\n±ÀÀ£ÐÅÏ¢´°¿ÚÐÂÔöµ÷ÓÃ¶ÑÕ»µÄÏÔÊ¾£¬ÐÂÔö½«±ÀÀ£ÐÅÏ¢Ð´ÈëÈÕÖ¾µÄ¹¦ÄÜ¡£\nLite°æÐÂÔöÁËÏÔ¿¨ºÍÓ²ÅÌÀûÓÃÂÊÏÔÊ¾¡£\nÐÞÕý¡°³£¹æÉèÖÃ¡±ÖÐ¸üÐÂÔ´Ã»ÓÐ±£´æµÄÎÊÌâ \nÐÞÕý¶àÏÔÊ¾Æ÷DPI²»Ò»ÖÂÊ±¸ü»»Æ¤·ô¶Ô»°¿òÔ¤ÀÀÍ¼ÖÐ×ÖÌå´óÐ¡²»ÕýÈ·µÄÎÊÌâ¡£\nÐÞÕýµ±Ðü¸¡´°ÔÚ²»Í¬DPIµÄÏÔÊ¾Æ÷¼äÒÆ¶¯Ê±DPI¿ÉÄÜ²»ÕýÈ·µÄÎÊÌâ\nÐÞÕýÏÔÊ¾ÁË²å¼þÏîÄ¿Ê±ÈÎÎñÀ¸ÄÚÖÃÏîÄ¿²»ÄÜÈ«²¿È¥µô£¬»á±£ÁôÒ»¸öÉÏ´«ËÙ¶ÈµÄÎÊÌâ\nÓÅ»¯ÁËÑ¡ÏîÉèÖÃÖÐ¡°ÑÕÉ«ÏÔÊ¾¡±¿Ø¼þÖÐÑÕÉ«ÏÔÊ¾µÄÑùÊ½£¬ÐÞÕýÑÕÉ«ÊýÁ¿´óÓÚ8¸öÊ±¿Ø¼þÓÒ²àÓÐÃ÷ÏÔµÄ¿Õ°×µÄÎÊÌâ\nÐÞÕýÖ÷´°¿ÚºÍÈÎÎñÀ¸´°¿ÚÉèÖÃÖÐ£¬¸ü¸Ä¡°×ÖÌå´óÐ¡¡±ÎÄ±¾¿òÖÐµÄÖµºóµã»÷¡°Ó¦ÓÃ¡±Ã»ÓÐÉúÐ§µÄÎÊÌâ\nÐÞÕýÈÎÎñÀ¸´°¿ÚÊó±êÌáÊ¾ÖÐµÄÍøËÙµ¥Î»ºÍÉèÖÃµÄ²»Ò»ÖÂµÄÎÊÌâ\nÐÞÕýCPUÆµÂÊ²»×ñÑ­¡°ÊýÖµºÍµ¥Î»ÓÃ¿Õ¸ñ·Ö¸ô¡±Ñ¡ÏîµÄÎÊÌâ\nÌí¼Ó´ÓË¯Ãß×´Ì¬»Ö¸´Ê±ÖØÐÂ³õÊ¼»¯Á¬½ÓµÄ´¦Àí£¬½â¾öÓÐÊ±´ÓË¯Ãß×´Ì¬»Ö¸´Ê±ÎÞ·¨»ñÈ¡µ½ÍøËÙµÄÎÊÌâ¡£\nÐÞÕýÆ¤·ôÎÄ¼þÖÐ×ÖÌåÃû³ÆÓÐUnicode×Ö·ûÊ±ÎÞ·¨»ñÈ¡ÕýÈ·µÄ×ÖÌåµÄÎÊÌâ£¬²¢ÐÞÕýÁËÆ¤·ôÎÄ¼þ½âÎöµÄÒ»Ð©Âß¼­ÎÊÌâ¡£\nÆäËûÏ¸½Ú·½ÃæµÄ¸Ä½ø¡£</contents>
+ï»¿<root>
+  <version>1.86-pawnio.1</version>
+  <GitHub>
+    <link>https://github.com/Jeon-JongChan/TrafficMonitor_SecurityFix/releases/download/v1.86-pawnio.1/TrafficMonitor_v1.86-pawnio.1_x86.zip</link>
+    <link_x64>https://github.com/Jeon-JongChan/TrafficMonitor_SecurityFix/releases/download/v1.86-pawnio.1/TrafficMonitor_v1.86-pawnio.1_x64.zip</link_x64>
+    <link_arm64ec></link_arm64ec>
+  </GitHub>
+  <Gitee>
+    <link>https://github.com/Jeon-JongChan/TrafficMonitor_SecurityFix/releases/download/v1.86-pawnio.1/TrafficMonitor_v1.86-pawnio.1_x86.zip</link>
+    <link_x64>https://github.com/Jeon-JongChan/TrafficMonitor_SecurityFix/releases/download/v1.86-pawnio.1/TrafficMonitor_v1.86-pawnio.1_x64.zip</link_x64>
+    <link_arm64ec></link_arm64ec>
+  </Gitee>
+  <update_contents>
+    <contents_zh_cn>WinRing0ë¥¼ í¬í•¨í•œ ë¼ì´ë¸ŒëŸ¬ë¦¬ë¥¼ LibreHardwareMonitor 0.9.6 / PawnIOë¡œ êµì²´í–ˆìŠµë‹ˆë‹¤.\nCPUÂ·ë©”ì¸ë³´ë“œ ì„¼ì„œì—ëŠ” ê³µì‹ PawnIO ì„¤ì¹˜ê°€ í•„ìš”í•©ë‹ˆë‹¤: https://pawnio.eu/</contents_zh_cn>
+    <contents_en>WinRing0ë¥¼ í¬í•¨í•œ ë¼ì´ë¸ŒëŸ¬ë¦¬ë¥¼ LibreHardwareMonitor 0.9.6 / PawnIOë¡œ êµì²´í–ˆìŠµë‹ˆë‹¤.\nCPUÂ·ë©”ì¸ë³´ë“œ ì„¼ì„œì—ëŠ” ê³µì‹ PawnIO ì„¤ì¹˜ê°€ í•„ìš”í•©ë‹ˆë‹¤: https://pawnio.eu/</contents_en>
+    <contents_zh_tw>WinRing0ë¥¼ í¬í•¨í•œ ë¼ì´ë¸ŒëŸ¬ë¦¬ë¥¼ LibreHardwareMonitor 0.9.6 / PawnIOë¡œ êµì²´í–ˆìŠµë‹ˆë‹¤.\nCPUÂ·ë©”ì¸ë³´ë“œ ì„¼ì„œì—ëŠ” ê³µì‹ PawnIO ì„¤ì¹˜ê°€ í•„ìš”í•©ë‹ˆë‹¤: https://pawnio.eu/</contents_zh_tw>
+  </update_contents>
+</root>

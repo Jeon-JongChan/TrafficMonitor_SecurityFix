@@ -1,0 +1,16 @@
+<!-- NuGet에서 플랫폼에 맞는 런타임 DLL과 바인딩 리디렉션을 생성한다. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <OutputPath>$(MSBuildThisFileDirectory)..\.build\hardware\$(RuntimeIdentifier)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <RestorePackagesPath>$(MSBuildThisFileDirectory)..\.build\packages</RestorePackagesPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="LibreHardwareMonitorLib" Version="[0.9.6]" />
+  </ItemGroup>
+</Project>

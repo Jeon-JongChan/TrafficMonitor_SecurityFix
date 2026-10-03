@@ -46,6 +46,12 @@ namespace OpenHardwareMonitorApi
         return error_message;
     }
 
+    /// <summary>공식 라이브러리가 제공하는 PawnIO 설치 상태를 반환한다.</summary>
+    bool IsPawnIoInstalled()
+    {
+        return LibreHardwareMonitor::PawnIo::PawnIo::IsInstalled;
+    }
+
     float COpenHardwareMonitor::CpuTemperature()
     {
         return m_cpu_temperature;
@@ -126,16 +132,20 @@ namespace OpenHardwareMonitorApi
         MonitorGlobal::Instance()->computer->IsMotherboardEnabled = enable;
     }
 
+    /// <summary>유효한 CPU 클럭만 평균하고 값이 없으면 사용 불가 상태를 유지한다.</summary>
     bool COpenHardwareMonitor::GetCPUFreq(IHardware^ hardware, float& freq) {
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
-            if (hardware->Sensors[i]->SensorType == SensorType::Clock)
+            if (hardware->Sensors[i]->SensorType == SensorType::Clock && hardware->Sensors[i]->Value.HasValue)
             {
                 String^ name = hardware->Sensors[i]->Name;
                 if (name != L"Bus Speed")
                     m_all_cpu_clock[ClrStringToStdWstring(name)] = Convert::ToDouble(hardware->Sensors[i]->Value);
             }
         }
+        // 드라이버가 없거나 센서가 미지원이면 0으로 나누지 않는다.
+        if (m_all_cpu_clock.empty())
+            return false;
         float sum{};
         for (auto i : m_all_cpu_clock)
             sum += i.second;
@@ -143,11 +153,12 @@ namespace OpenHardwareMonitorApi
         return true;
     }
 
+    /// <summary>측정값이 있는 CPU 부하 센서를 조회한다.</summary>
     bool COpenHardwareMonitor::GetCpuUsage(IHardware^ hardware, float& cpu_usage)
     {
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
-            if (hardware->Sensors[i]->SensorType == SensorType::Load)
+            if (hardware->Sensors[i]->SensorType == SensorType::Load && hardware->Sensors[i]->Value.HasValue)
             {
                 String^ name = hardware->Sensors[i]->Name;
                 if (name != L"CPU Total")
@@ -160,6 +171,7 @@ namespace OpenHardwareMonitorApi
         return false;
     }
 
+    /// <summary>유효한 온도 센서만 집계하고 하위 하드웨어까지 조회한다.</summary>
     bool COpenHardwareMonitor::GetHardwareTemperature(IHardware^ hardware, float& temperature)
     {
         temperature = -1;
@@ -180,7 +192,8 @@ namespace OpenHardwareMonitorApi
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
             //找到温度传感器
-            if (hardware->Sensors[i]->SensorType == SensorType::Temperature)
+            // 미측정 Nullable 값을 실제 0도 온도로 취급하지 않는다.
+            if (hardware->Sensors[i]->SensorType == SensorType::Temperature && hardware->Sensors[i]->Value.HasValue)
             {
                 float cur_temperture = Convert::ToDouble(hardware->Sensors[i]->Value);
                 all_temperature.push_back(cur_temperture);
@@ -211,6 +224,7 @@ namespace OpenHardwareMonitorApi
         return false;
     }
 
+    /// <summary>측정된 CPU 온도만 저장해 미설치 드라이버의 빈 값을 제외한다.</summary>
     bool COpenHardwareMonitor::GetCpuTemperature(IHardware^ hardware, float& temperature)
     {
         temperature = -1;
@@ -218,7 +232,7 @@ namespace OpenHardwareMonitorApi
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
             //找到温度传感器
-            if (hardware->Sensors[i]->SensorType == SensorType::Temperature)
+            if (hardware->Sensors[i]->SensorType == SensorType::Temperature && hardware->Sensors[i]->Value.HasValue)
             {
                 String^ name = hardware->Sensors[i]->Name;
                 //保存每个CPU传感器的温度
@@ -236,13 +250,14 @@ namespace OpenHardwareMonitorApi
         return temperature > 0;
     }
 
+    /// <summary>측정값이 있는 GPU 부하 센서를 조회한다.</summary>
     bool COpenHardwareMonitor::GetGpuUsage(IHardware^ hardware, float& gpu_usage)
     {
-        float usage_max = 0;
+        float usage_max = -1;
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
             //找到负载
-            if (hardware->Sensors[i]->SensorType == SensorType::Load)
+            if (hardware->Sensors[i]->SensorType == SensorType::Load && hardware->Sensors[i]->Value.HasValue)
             {
                 float cur_gpu_usage = Convert::ToDouble(hardware->Sensors[i]->Value);
                 if (hardware->Sensors[i]->Name == L"GPU Core")
@@ -257,15 +272,16 @@ namespace OpenHardwareMonitorApi
             }
         }
         gpu_usage = usage_max;
-        return true;
+        return usage_max >= 0;
     }
 
+    /// <summary>측정값이 있는 디스크 활동량 센서를 조회한다.</summary>
     bool COpenHardwareMonitor::GetHddUsage(IHardware^ hardware, float& hdd_usage)
     {
         for (int i = 0; i < hardware->Sensors->Length; i++)
         {
             //找到负载
-            if (hardware->Sensors[i]->SensorType == SensorType::Load)
+            if (hardware->Sensors[i]->SensorType == SensorType::Load && hardware->Sensors[i]->Value.HasValue)
             {
                 if (hardware->Sensors[i]->Name == L"Total Activity")
                 {
@@ -287,6 +303,7 @@ namespace OpenHardwareMonitorApi
         MonitorGlobal::Instance()->UnInit();
     }
 
+    /// <summary>다음 측정 전에 센서 값과 캐시를 초기화해 오래된 값을 제거한다.</summary>
     void COpenHardwareMonitor::ResetAllValues()
     {
         m_cpu_temperature = -1;
@@ -300,6 +317,8 @@ namespace OpenHardwareMonitorApi
         m_gpu_intel_usage = -1;
         m_all_hdd_temperature.clear();
         m_all_hdd_usage.clear();
+        m_all_cpu_temperature.clear();
+        m_all_cpu_clock.clear();
         m_cpu_freq = -1;
         m_cpu_usage = -1;
     }

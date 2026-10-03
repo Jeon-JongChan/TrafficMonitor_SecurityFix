@@ -620,6 +620,7 @@ UINT CTrafficMonitorApp::CheckUpdateThreadFunc(LPVOID lpParam)
     return 0;
 }
 
+/// <summary>하드웨어 라이브러리를 초기화하고 필요한 드라이버의 설치를 안내한다.</summary>
 UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
 {
 #ifndef WITHOUT_TEMPERATURE
@@ -628,6 +629,12 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
     if (theApp.m_pMonitor == nullptr)
     {
         AfxMessageBox(OpenHardwareMonitorApi::GetErrorMessage().c_str(), MB_ICONERROR | MB_OK);
+    }
+    // CPU·메인보드 센서만 PawnIO 설치를 안내하며 다른 모니터링은 계속 사용한다.
+    else if ((theApp.m_general_data.IsHardwareEnable(HI_CPU) || theApp.m_general_data.IsHardwareEnable(HI_MBD))
+        && !OpenHardwareMonitorApi::IsPawnIoInstalled())
+    {
+        AfxMessageBox(CCommon::LoadText(IDS_PAWNIO_NOT_INSTALLED), MB_ICONINFORMATION | MB_OK);
     }
     //设置硬件监控的启用状态
     theApp.UpdateOpenHardwareMonitorEnableState();

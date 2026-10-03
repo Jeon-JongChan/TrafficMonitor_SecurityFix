@@ -29,4 +29,6 @@ namespace OpenHardwareMonitorApi
 
     OPENHARDWAREMONITOR_API std::shared_ptr<IOpenHardwareMonitor> CreateInstance();
     OPENHARDWAREMONITOR_API std::wstring GetErrorMessage();
+    /// <summary>PawnIO 설치 여부를 공식 라이브러리에서 조회한다.</summary>
+    OPENHARDWAREMONITOR_API bool IsPawnIoInstalled();
 }

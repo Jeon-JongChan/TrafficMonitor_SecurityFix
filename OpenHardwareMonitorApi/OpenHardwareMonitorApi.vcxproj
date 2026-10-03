@@ -100,6 +100,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <!-- ARM64EC의 CLR 래퍼는 솔루션 설정에 따라 x64로 빌드한다. -->
+  <PropertyGroup>
+    <HardwareRuntimeIdentifier Condition="'$(Platform)'=='Win32'">win-x86</HardwareRuntimeIdentifier>
+    <HardwareRuntimeIdentifier Condition="'$(Platform)'!='Win32'">win-x64</HardwareRuntimeIdentifier>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)..\include;$(IncludePath)</IncludePath>
@@ -197,7 +202,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="LibreHardwareMonitorLib">
-      <HintPath>LibreHardwareMonitorLib.dll</HintPath>
+      <HintPath>$(ProjectDir)..\.build\hardware\$(HardwareRuntimeIdentifier)\LibreHardwareMonitorLib.dll</HintPath>
+      <Private>true</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
