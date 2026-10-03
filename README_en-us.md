@@ -1,4 +1,16 @@
-**[简体中文](./README.md) | English**
+**[简体中文](./README.md) | English | [한국어](./README_ko-kr.md)**
+
+# PawnIO security update
+
+[Download this fork](https://github.com/Jeon-JongChan/TrafficMonitor_SecurityFix/releases/latest)
+
+- **Hardware access:** Replaced the WinRing0-based LibreHardwareMonitor DLL with the **LibreHardwareMonitorLib 0.9.6** NuGet package, which uses PawnIO.
+- **Existing features:** The existing C++/CLI wrapper and sensor API are retained. CPU, GPU, memory, and disk monitoring remain available through the existing settings.
+- **PawnIO installation:** CPU and motherboard sensors require the [official PawnIO driver](https://pawnio.eu/). If those monitoring options are enabled without the driver, the app displays its installation address. Restart the app after installation.
+- **Missing sensor values:** Safely handles unavailable sensor values and empty CPU clock lists, and distinguishes unavailable GPU usage from an actual 0% reading.
+- **Korean UI:** Right-click the app, select **Options → General Settings → Language → 한국어**, apply the setting, and restart. Korean translations are embedded in the executable; no separate language file is required.
+
+---
 
 [![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](https://github.com/996icu/996.ICU/blob/master/LICENSE)

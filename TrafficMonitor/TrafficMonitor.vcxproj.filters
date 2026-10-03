@@ -867,6 +867,9 @@
     <None Include="language\Traditional_Chinese.ini">
       <Filter>资源文件\language</Filter>
     </None>
+    <None Include="language\Korean.ini">
+      <Filter>资源文件\language</Filter>
+    </None>
     <None Include="language\English.ini">
       <Filter>资源文件\language</Filter>
     </None>

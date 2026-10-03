@@ -1,4 +1,16 @@
-**简体中文 | [English](./README_en-us.md)**
+**简体中文 | [English](./README_en-us.md) | [한국어](./README_ko-kr.md)**
+
+# PawnIO 安全修复版本
+
+[下载此修复版本](https://github.com/Jeon-JongChan/TrafficMonitor_SecurityFix/releases/latest)
+
+- **硬件传感器访问变更：** 将基于 WinRing0 的 LibreHardwareMonitor DLL 替换为使用 PawnIO 的 **LibreHardwareMonitorLib 0.9.6** NuGet 包。
+- **保留现有功能：** 继续使用现有的 C++/CLI 包装层和传感器 API。CPU、显卡、内存和硬盘等监控功能仍可通过现有设置使用。
+- **安装 PawnIO：** CPU 和主板传感器需要[官方 PawnIO 驱动](https://pawnio.eu/)。启用相应监控选项但未安装驱动时，程序会显示安装地址。安装后请重新启动程序。
+- **完善传感器缺失值处理：** 安全处理无读数的传感器和空 CPU 频率列表，并区分无法读取的显卡使用率与实际的 0%。
+- **支持选择韩语界面：** 右键打开 **选项 → 常规设置 → 语言 → 한국어**，应用设置后重新启动程序。韩语翻译已嵌入可执行文件，无需另行复制语言文件。
+
+---
 
 [![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
