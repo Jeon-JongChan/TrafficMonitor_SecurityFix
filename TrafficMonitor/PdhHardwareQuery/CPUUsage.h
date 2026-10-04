@@ -14,6 +14,9 @@ public:
 
     bool GetCPUUsage(int& cpu_usage);
 
+    /// ??? ?? ?? ??? ? ??
+    bool GetValue(double& value) { return QueryValue(value); }
+
 };
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -38,4 +41,5 @@ private:
 
     CPdhCPUUsage m_pdh_time;     // % Processor Time
     CPdhCPUUsage m_pdh_utility;  // % Processor Utility
+    CPdhCPUUsage m_pdh_perf;     // % Processor Performance
 };

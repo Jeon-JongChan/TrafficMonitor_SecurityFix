@@ -31,16 +31,26 @@ bool CPdhCPUUsage::GetCPUUsage(int& cpu_usage)
 CCPUUsage::CCPUUsage()
     : m_pdh_time(_T("\\Processor Information(_Total)\\% Processor Time"))
     , m_pdh_utility(_T("\\Processor Information(_Total)\\% Processor Utility"))
+    , m_pdh_perf(_T("\\Processor Information(_Total)\\% Processor Performance"))
 {
 }
 
-/// method: 0=CPU 시간(GetSystemTimes), 1=PDH Processor Time, 2=PDH Processor Utility
+/// method: 0=CPU 시간(GetSystemTimes), 1=PDH Processor Time, 2=PDH Processor Utility, 3=Utility÷Performance(클럭 보정)
 int CCPUUsage::GetCpuUsage(int method)
 {
     int cpu_usage{};
     if (method == 0)
     {
         cpu_usage = GetCpuUsageByGetSystemTimes();
+    }
+    else if (method == 3)
+    {
+        // Utility는 기본 클럭 대비 값이므로 현재 클럭 비율(Performance)로 나누어 정규화
+        double utility{}, perf{};
+        if (m_pdh_utility.GetValue(utility) && m_pdh_perf.GetValue(perf) && perf > 0)
+            cpu_usage = (std::min)(100, static_cast<int>(utility * 100 / perf + 0.5));
+        else
+            cpu_usage = GetCpuUsageByGetSystemTimes();
     }
     else
     {

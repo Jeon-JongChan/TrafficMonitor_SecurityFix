@@ -381,7 +381,8 @@ struct GeneralSettingData
     {
         CA_CPU_TIME,    //使用时间
         CA_PDH,         //性能计数器
-        CA_PDH_UTILITY   // PDH % Processor Utility (Win10+, boost clock > 100%)
+        CA_PDH_UTILITY,  // PDH % Processor Utility (Win10+, boost clock > 100%)
+        CA_PDH_NORMALIZED // Utility / Performance (clock normalized)
     };
     CpuUsageAcquireMethod cpu_usage_acquire_method{};  //获取CPU利用率的方式
 
