@@ -6,7 +6,7 @@
 class CPdhCPUUsage : public CPdhQuery
 {
 public:
-    CPdhCPUUsage();
+    CPdhCPUUsage(LPCTSTR counter_path);
 
     ~CPdhCPUUsage()
     {
@@ -25,7 +25,7 @@ public:
     ~CCPUUsage()
     {}
 
-    int GetCpuUsage(bool use_cpu_time);
+    int GetCpuUsage(int method);
 
 private:
     int GetCpuUsageByGetSystemTimes();
@@ -36,5 +36,6 @@ private:
     FILETIME m_prekernelTime{};
     FILETIME m_preuserTime{};
 
-    CPdhCPUUsage m_pdh_cup_usage_query;
+    CPdhCPUUsage m_pdh_time;     // % Processor Time
+    CPdhCPUUsage m_pdh_utility;  // % Processor Utility
 };

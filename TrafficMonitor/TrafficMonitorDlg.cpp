@@ -1407,7 +1407,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     m_get_disk_usage_by_pdh = false;
 
     //获取CPU使用率
-    theApp.m_cpu_usage = m_cpu_usage_helper.GetCpuUsage(theApp.m_general_data.cpu_usage_acquire_method == GeneralSettingData::CA_CPU_TIME);
+    theApp.m_cpu_usage = m_cpu_usage_helper.GetCpuUsage(static_cast<int>(theApp.m_general_data.cpu_usage_acquire_method));
 
     //获取CPU频率
     //if (lite_version || is_arm64ec || !theApp.m_general_data.IsHardwareEnable(HI_CPU))

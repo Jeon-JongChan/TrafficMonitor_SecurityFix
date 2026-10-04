@@ -83,6 +83,7 @@ public:
     virtual BOOL PreTranslateMessage(MSG* pMsg);
     afx_msg void OnBnClickedUseCpuTimeRadio();
     afx_msg void OnBnClickedUsePdhRadio();
+    afx_msg void OnBnClickedUsePdhUtilityRadio();
     afx_msg LRESULT OnSpinEditPosChanged(WPARAM wParam, LPARAM lParam);
     afx_msg void OnEnKillfocusMonitorSpanEdit();
     afx_msg void OnBnClickedCpuTempTipCheck();

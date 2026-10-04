@@ -228,6 +228,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SHOW_ALL_CONNECTION_CHECK, &CGeneralSettingsDlg::OnBnClickedShowAllConnectionCheck)
     ON_BN_CLICKED(IDC_USE_CPU_TIME_RADIO, &CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio)
     ON_BN_CLICKED(IDC_USE_PDH_RADIO, &CGeneralSettingsDlg::OnBnClickedUsePdhRadio)
+    ON_BN_CLICKED(IDC_USE_PDH_UTILITY_RADIO, &CGeneralSettingsDlg::OnBnClickedUsePdhUtilityRadio)
     ON_EN_KILLFOCUS(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnKillfocusMonitorSpanEdit)
     ON_BN_CLICKED(IDC_CPU_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedCpuTempTipCheck)
     ON_BN_CLICKED(IDC_GPU_TEMP_TIP_CHECK, &CGeneralSettingsDlg::OnBnClickedGpuTempTipCheck)
@@ -380,6 +381,10 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     else if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_PDH)
     {
         CheckDlgButton(IDC_USE_PDH_RADIO, TRUE);
+    }
+    else if (m_data.cpu_usage_acquire_method == GeneralSettingData::CA_PDH_UTILITY)
+    {
+        CheckDlgButton(IDC_USE_PDH_UTILITY_RADIO, TRUE);
     }
 
     m_monitor_span_edit.SetRange(MONITOR_TIME_SPAN_MIN, MONITOR_TIME_SPAN_MAX, MONITOR_SPAN_STEP);
@@ -594,6 +599,12 @@ void CGeneralSettingsDlg::OnBnClickedUseCpuTimeRadio()
 void CGeneralSettingsDlg::OnBnClickedUsePdhRadio()
 {
     m_data.cpu_usage_acquire_method = GeneralSettingData::CA_PDH;
+}
+
+/// 성능 카운터(Processor Utility) 방식 선택
+void CGeneralSettingsDlg::OnBnClickedUsePdhUtilityRadio()
+{
+    m_data.cpu_usage_acquire_method = GeneralSettingData::CA_PDH_UTILITY;
 }
 
 afx_msg LRESULT CGeneralSettingsDlg::OnSpinEditPosChanged(WPARAM wParam, LPARAM lParam)

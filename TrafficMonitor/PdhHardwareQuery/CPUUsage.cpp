@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "CPUUsage.h"
 #include "Common.h"
 #include "TrafficMonitor.h"
@@ -8,8 +8,8 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
-CPdhCPUUsage::CPdhCPUUsage()
-    : CPdhQuery(theApp.m_win_version.GetMajorVersion() >= 10 ? _T("\\Processor Information(_Total)\\% Processor Utility") : _T("\\Processor Information(_Total)\\% Processor Time"))
+CPdhCPUUsage::CPdhCPUUsage(LPCTSTR counter_path)
+    : CPdhQuery(counter_path)
 {
 }
 
@@ -18,7 +18,7 @@ bool CPdhCPUUsage::GetCPUUsage(int& cpu_usage)
     double value{};
     if (QueryValue(value))
     {
-        cpu_usage = static_cast<int>(value);
+        cpu_usage = static_cast<int>(value + 0.5); // 작업관리자와 동일하게 반올림
         if (cpu_usage > 100)
             cpu_usage = 100;
         return true;
@@ -29,20 +29,24 @@ bool CPdhCPUUsage::GetCPUUsage(int& cpu_usage)
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 CCPUUsage::CCPUUsage()
+    : m_pdh_time(_T("\\Processor Information(_Total)\\% Processor Time"))
+    , m_pdh_utility(_T("\\Processor Information(_Total)\\% Processor Utility"))
 {
 }
 
-int CCPUUsage::GetCpuUsage(bool use_cpu_time)
+/// method: 0=CPU 시간(GetSystemTimes), 1=PDH Processor Time, 2=PDH Processor Utility
+int CCPUUsage::GetCpuUsage(int method)
 {
     int cpu_usage{};
-    if (use_cpu_time)
+    if (method == 0)
     {
         cpu_usage = GetCpuUsageByGetSystemTimes();
     }
     else
     {
         //如果通过pdh获取CPU利用率失败，采用GetSystemTimes获取
-        if (!m_pdh_cup_usage_query.GetCPUUsage(cpu_usage))
+        CPdhCPUUsage& pdh = (method == 2) ? m_pdh_utility : m_pdh_time;
+        if (!pdh.GetCPUUsage(cpu_usage))
         {
             cpu_usage = GetCpuUsageByGetSystemTimes();
             //写入日志
