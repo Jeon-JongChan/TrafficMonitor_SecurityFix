@@ -1,4 +1,4 @@
-﻿// 这是主 DLL 文件。
+// 这是主 DLL 文件。
 
 #include "stdafx.h"
 
@@ -185,6 +185,10 @@ namespace OpenHardwareMonitorApi
             break;
         case HardwareType::GpuNvidia: case HardwareType::GpuAmd: case HardwareType::GpuIntel:
             temperature_name = L"GPU Core";
+            break;
+        case HardwareType::Storage:
+            // 저장장치는 주 센서("Temperature")만 사용한다. 보조/Warning/Critical 센서와 평균 내면 실제 온도와 다름
+            temperature_name = L"Temperature";
             break;
         default:
             break;
