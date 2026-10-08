@@ -96,6 +96,8 @@ bool CTaskbarItemOrderHelper::IsItemDisplayed(CommonDisplayItem item)
             displayed = false;
         if (item == TDI_MAIN_BOARD_TEMP && !theApp.m_general_data.IsHardwareEnable(HI_MBD))
             displayed = false;
+        if (item == TDI_MEMORY_TEMP && !theApp.m_general_data.IsHardwareEnable(HI_MEMORY))
+            displayed = false;
     }
 
     return displayed;

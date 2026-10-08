@@ -15,6 +15,7 @@ int main()
     monitor->SetGpuEnable(true);
     monitor->SetHddEnable(true);
     monitor->SetMainboardEnable(true);
+    monitor->SetMemoryEnable(true);
     monitor->GetHardwareInfo();
     // PawnIO가 없어도 빈 센서를 NaN으로 바꾸거나 초기화 예외를 숨기면 실패한다.
     if (!OpenHardwareMonitorApi::GetErrorMessage().empty() || !std::isfinite(monitor->CpuFreq()))
@@ -22,11 +23,19 @@ int main()
     for (const auto& sensor : monitor->AllCpuTemperature())
         if (!std::isfinite(sensor.second))
             return 3;
+    if (!std::isfinite(monitor->MemoryTemperature()) || monitor->MemoryTemperature() < -1)
+        return 5;
 
     monitor->SetCpuEnable(false);
     monitor->GetHardwareInfo();
     if (!monitor->AllCpuTemperature().empty() || monitor->CpuFreq() != -1)
         return 4;
+    monitor->SetMemoryEnable(false);
+    if (monitor->MemoryTemperature() != -1)
+        return 6;
+    monitor->GetHardwareInfo();
+    if (monitor->MemoryTemperature() != -1)
+        return 7;
     std::cout << "PawnIO 설치 상태: " << OpenHardwareMonitorApi::IsPawnIoInstalled() << std::endl;
     return 0;
 }

@@ -16,7 +16,8 @@ enum DisplayItem
     TDI_HDD_USAGE,
     TDI_TOTAL_SPEED,
     TDI_CPU_FREQ,
-    TDI_TODAY_TRAFFIC
+    TDI_TODAY_TRAFFIC,
+    TDI_MEMORY_TEMP         // 기존 설정 비트값을 유지하기 위해 끝에 추가한다.
 };
 
 //所有内置显示项目的集合
@@ -24,7 +25,7 @@ const std::set<DisplayItem> AllDisplayItems
 {
     TDI_UP, TDI_DOWN, TDI_CPU, TDI_MEMORY, TDI_GPU_USAGE
 #ifndef WITHOUT_TEMPERATURE
-    , TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP
+    , TDI_CPU_TEMP, TDI_GPU_TEMP, TDI_HDD_TEMP, TDI_MAIN_BOARD_TEMP, TDI_MEMORY_TEMP
 #endif
     , TDI_HDD_USAGE, TDI_CPU_FREQ, TDI_TOTAL_SPEED, TDI_TODAY_TRAFFIC
 };

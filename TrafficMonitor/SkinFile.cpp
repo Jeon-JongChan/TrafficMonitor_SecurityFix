@@ -747,6 +747,8 @@ string CSkinFile::GetDisplayItemXmlNodeName(DisplayItem display_item)
     case TDI_MAIN_BOARD_TEMP:
         return "main_board_temperature";
         break;
+    case TDI_MEMORY_TEMP:
+        return "memory_temperature";
     case TDI_HDD_USAGE:
         return "hdd";
         break;

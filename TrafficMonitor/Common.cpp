@@ -346,10 +346,11 @@ CString CCommon::DataSizeToString(unsigned long long size, bool with_space)
     return str;
 }
 
+/// <summary>온도를 표시 문자열로 변환하며 음수인 미측정 값만 숨긴다.</summary>
 CString CCommon::TemperatureToString(float temperature, const PublicSettingData& cfg)
 {
     CString str_val;
-    if (temperature <= 0)
+    if (temperature < 0)
         str_val = _T("--");
     else
         str_val.Format(_T("%d"), static_cast<int>(temperature));

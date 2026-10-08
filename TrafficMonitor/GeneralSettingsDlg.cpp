@@ -42,6 +42,8 @@ void CGeneralSettingsDlg::CheckTaskbarDisplayItem()
     }
     if (!theApp.m_general_data.IsHardwareEnable(HI_MBD))
         theApp.m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
+    if (!theApp.m_general_data.IsHardwareEnable(HI_MEMORY))
+        theApp.m_taskbar_data.display_item.Remove(TDI_MEMORY_TEMP);
 }
 
 void CGeneralSettingsDlg::SetControlMouseWheelEnable(bool enable)
@@ -243,6 +245,7 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_GPU_CHECK, &CGeneralSettingsDlg::OnBnClickedGpuCheck)
     ON_BN_CLICKED(IDC_HDD_CHECK, &CGeneralSettingsDlg::OnBnClickedHddCheck)
     ON_BN_CLICKED(IDC_MBD_CHECK, &CGeneralSettingsDlg::OnBnClickedMbdCheck)
+    ON_BN_CLICKED(IDC_MEMORY_CHECK, &CGeneralSettingsDlg::OnBnClickedMemoryCheck)
     ON_CBN_SELCHANGE(IDC_SELECT_CPU_COMBO, &CGeneralSettingsDlg::OnCbnSelchangeSelectCpuCombo)
     ON_BN_CLICKED(IDC_PLUGIN_MANAGE_BUTTON, &CGeneralSettingsDlg::OnBnClickedPluginManageButton)
     ON_BN_CLICKED(IDC_SHOW_NOTIFY_ICON_CHECK, &CGeneralSettingsDlg::OnBnClickedShowNotifyIconCheck)
@@ -412,6 +415,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     CheckDlgButton(IDC_GPU_CHECK, m_data.IsHardwareEnable(HI_GPU));
     CheckDlgButton(IDC_HDD_CHECK, m_data.IsHardwareEnable(HI_HDD));
     CheckDlgButton(IDC_MBD_CHECK, m_data.IsHardwareEnable(HI_MBD));
+    CheckDlgButton(IDC_MEMORY_CHECK, m_data.IsHardwareEnable(HI_MEMORY));
 
     if (theApp.m_pMonitor != nullptr)
     {
@@ -449,6 +453,7 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     EnableDlgCtrl(IDC_GPU_CHECK, false);
     EnableDlgCtrl(IDC_HDD_CHECK, false);
     EnableDlgCtrl(IDC_MBD_CHECK, false);
+    EnableDlgCtrl(IDC_MEMORY_CHECK, false);
     //EnableDlgCtrl(IDC_SELECT_HARD_DISK_COMBO, false);
     EnableDlgCtrl(IDC_SELECT_CPU_COMBO, false);
     EnableDlgCtrl(IDC_CPU_TEMP_STATIC, false);
@@ -799,6 +804,19 @@ void CGeneralSettingsDlg::OnBnClickedMbdCheck()
 
 }
 
+
+/// <summary>기존 하드웨어 감지 안내를 거쳐 시스템 RAM 감지를 설정한다.</summary>
+void CGeneralSettingsDlg::OnBnClickedMemoryCheck()
+{
+    bool checked = IsDlgButtonChecked(IDC_MEMORY_CHECK) != 0;
+    // 기존 안내에서 취소하면 체크 상태와 저장할 설정을 함께 되돌린다.
+    if (checked && !ShowHardwareMonitorWarning())
+    {
+        checked = false;
+        CheckDlgButton(IDC_MEMORY_CHECK, FALSE);
+    }
+    m_data.SetHardwareEnable(HI_MEMORY, checked);
+}
 
 void CGeneralSettingsDlg::OnCbnSelchangeSelectCpuCombo()
 {

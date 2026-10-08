@@ -33,6 +33,10 @@ namespace OpenHardwareMonitorApi {
         virtual void SetGpuEnable(bool enable) override;
         virtual void SetHddEnable(bool enable) override;
         virtual void SetMainboardEnable(bool enable) override;
+        /// <summary>측정 가능한 DIMM 중 최고 온도를 반환한다.</summary>
+        virtual float MemoryTemperature() override;
+        /// <summary>시스템 RAM 센서 감지를 설정한다.</summary>
+        virtual void SetMemoryEnable(bool enable) override;
 
     private:
         bool GetHardwareTemperature(IHardware^ hardware, float& temperature);
@@ -52,6 +56,7 @@ namespace OpenHardwareMonitorApi {
         float m_gpu_intel_temperature{};
         float m_hdd_temperature{};
         float m_main_board_temperature{};
+        float m_memory_temperature{ -1 };
         float m_gpu_nvidia_usage{};
         float m_gpu_ati_usage{};
         float m_gpu_intel_usage{};

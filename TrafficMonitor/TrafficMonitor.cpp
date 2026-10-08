@@ -181,6 +181,7 @@ void CTrafficMonitorApp::LoadConfig()
     m_taskbar_data.display_item.Remove(TDI_GPU_TEMP);
     m_taskbar_data.display_item.Remove(TDI_HDD_TEMP);
     m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
+    m_taskbar_data.display_item.Remove(TDI_MEMORY_TEMP);
 #endif
 
     //如果选项设置中关闭了某个硬件监控，则不显示对应的温度监控相关项目
@@ -196,6 +197,8 @@ void CTrafficMonitorApp::LoadConfig()
     }
     if (!m_general_data.IsHardwareEnable(HI_MBD))
         m_taskbar_data.display_item.Remove(TDI_MAIN_BOARD_TEMP);
+    if (!m_general_data.IsHardwareEnable(HI_MEMORY))
+        m_taskbar_data.display_item.Remove(TDI_MEMORY_TEMP);
 
     //m_taskbar_data.swap_up_down = ini.GetBool(_T("task_bar"), _T("task_bar_swap_up_down"), false);
 
@@ -630,8 +633,9 @@ UINT CTrafficMonitorApp::InitOpenHardwareMonitorLibThreadFunc(LPVOID lpParam)
     {
         AfxMessageBox(OpenHardwareMonitorApi::GetErrorMessage().c_str(), MB_ICONERROR | MB_OK);
     }
-    // CPU·메인보드 센서만 PawnIO 설치를 안내하며 다른 모니터링은 계속 사용한다.
-    else if ((theApp.m_general_data.IsHardwareEnable(HI_CPU) || theApp.m_general_data.IsHardwareEnable(HI_MBD))
+    // CPU·메인보드·RAM 센서는 PawnIO 설치 여부를 확인한다.
+    else if ((theApp.m_general_data.IsHardwareEnable(HI_CPU) || theApp.m_general_data.IsHardwareEnable(HI_MBD)
+        || theApp.m_general_data.IsHardwareEnable(HI_MEMORY))
         && !OpenHardwareMonitorApi::IsPawnIoInstalled())
     {
         AfxMessageBox(CCommon::LoadText(IDS_PAWNIO_NOT_INSTALLED), MB_ICONINFORMATION | MB_OK);
@@ -1093,7 +1097,8 @@ BOOL CTrafficMonitorApp::InitInstance()
     {
         //如果没有开启任何一项的硬件监控，则不初始化OpenHardwareMonitor
         if (theApp.m_general_data.IsHardwareEnable(HI_CPU) || theApp.m_general_data.IsHardwareEnable(HI_GPU)
-            || theApp.m_general_data.IsHardwareEnable(HI_HDD) || theApp.m_general_data.IsHardwareEnable(HI_MBD))
+            || theApp.m_general_data.IsHardwareEnable(HI_HDD) || theApp.m_general_data.IsHardwareEnable(HI_MBD)
+            || theApp.m_general_data.IsHardwareEnable(HI_MEMORY))
         {
             //启动初始化OpenHardwareMonitor的线程。由于OpenHardwareMonitor初始化需要一定的时间，为了防止启动时程序卡顿，将其放到后台线程中处理
             InitOpenHardwareLibInThread();
@@ -1160,6 +1165,9 @@ void CTrafficMonitorApp::UpdateOpenHardwareMonitorEnableState()
         m_pMonitor->SetGpuEnable(m_general_data.IsHardwareEnable(HI_GPU));
         m_pMonitor->SetHddEnable(m_general_data.IsHardwareEnable(HI_HDD));
         m_pMonitor->SetMainboardEnable(m_general_data.IsHardwareEnable(HI_MBD));
+        m_pMonitor->SetMemoryEnable(m_general_data.IsHardwareEnable(HI_MEMORY));
+        if (!m_general_data.IsHardwareEnable(HI_MEMORY))
+            m_memory_temperature = -1;
     }
 #endif
 }

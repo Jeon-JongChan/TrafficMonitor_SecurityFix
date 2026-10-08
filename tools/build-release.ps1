@@ -51,6 +51,15 @@ if ($LASTEXITCODE -ne 0) { throw '하드웨어 래퍼 검사 프로그램을 빌
 & $taskSmoke
 if ($LASTEXITCODE -ne 0) { throw "하드웨어 래퍼 검사 실패: $LASTEXITCODE" }
 
+# 가상 DIMM으로 실측값 선택과 결측값 처리를 검사한다. 실제 RAM 센서가 없어도 실행된다.
+$taskMemoryCheck = Join-Path $taskWrapperOutput 'memory_temperature_check.exe'
+$taskCompile = '"{0}" -no_logo -arch={1} && cl.exe /nologo /clr /EHa /MD /utf-8 /std:c++17 /DOPENHARDWAREMONITOR_EXPORTS /I"{2}\include" /AI"{3}" /FU"{3}\LibreHardwareMonitorLib.dll" "{2}\tests\memory_temperature_check.cpp" /Fo"{4}\memory_temperature_check.obj" /Fe"{5}"' -f $taskDevCmd, $taskArch, $taskRoot, $taskRuntime, $taskWrapperOutput, $taskMemoryCheck
+& $env:ComSpec /d /s /c $taskCompile
+if ($LASTEXITCODE -ne 0) { throw 'RAM 센서 검사 프로그램을 빌드하지 못했습니다.' }
+Copy-Item (Join-Path $taskRuntime 'HardwareDependencies.dll.config') "$taskMemoryCheck.config"
+& $taskMemoryCheck
+if ($LASTEXITCODE -ne 0) { throw "RAM 센서 검사 실패: $LASTEXITCODE" }
+
 # 새 스테이징 폴더를 사용해 이전 빌드 파일이 압축에 섞이지 않게 한다.
 $taskStage = Join-Path $taskRoot ('.build\stage\{0}-{1}\TrafficMonitor' -f $Platform, [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory $taskStage -Force | Out-Null
@@ -73,7 +82,9 @@ if (Test-Path 'TrafficMonitor\skins') { Copy-Item 'TrafficMonitor\skins' $taskSt
 @'
 TrafficMonitor PawnIO 보안 수정 버전
 
-CPU 및 메인보드 온도를 사용하려면 https://pawnio.eu/ 에서 공식 서명 PawnIO를 설치하세요.
+CPU·메인보드·RAM 온도를 사용하려면 https://pawnio.eu/ 에서 공식 서명 PawnIO를 설치하세요.
+RAM 온도는 옵션의 하드웨어 모니터링에서 RAM을 켠 뒤 작업 표시줄 표시 항목에서 선택하세요.
+여러 DIMM 중 최고 온도를 표시하며 RAM에 온도 센서가 없거나 SMBus 접근이 지원되지 않으면 측정할 수 없습니다.
 하드웨어 모니터링은 옵션에서 활성화합니다. PawnIO 미설치 시 일부 센서가 제공되지 않습니다.
 Microsoft Visual C++ 2015-2022 재배포 패키지와 .NET Framework 4.7.2 이상이 필요합니다.
 구형 설치 폴더에 덮어쓰기보다 이 압축 파일을 새 폴더에 풀어 사용하세요.

@@ -25,6 +25,11 @@ namespace OpenHardwareMonitorApi
         virtual void SetGpuEnable(bool enable) = 0;
         virtual void SetHddEnable(bool enable) = 0;
         virtual void SetMainboardEnable(bool enable) = 0;
+
+        /// <summary>측정 가능한 DIMM 중 최고 온도를 반환하며, 미측정이면 -1을 반환한다.</summary>
+        virtual float MemoryTemperature() = 0;
+        /// <summary>시스템 RAM 센서 감지를 활성화하거나 비활성화한다.</summary>
+        virtual void SetMemoryEnable(bool enable) = 0;
     };
 
     OPENHARDWAREMONITOR_API std::shared_ptr<IOpenHardwareMonitor> CreateInstance();

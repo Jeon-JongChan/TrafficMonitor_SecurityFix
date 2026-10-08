@@ -53,7 +53,8 @@ enum HardwareItem
     HI_CPU = 1 << 0,        //CPU
     HI_GPU = 1 << 1,        //显卡
     HI_HDD = 1 << 2,        //硬盘
-    HI_MBD = 1 << 3         //主板
+    HI_MBD = 1 << 3,        //主板
+    HI_MEMORY = 1 << 4      // 시스템 RAM 센서
 };
 
 #define DEF_CH L'\"'        //写入和读取ini文件字符串时，在字符串前后添加的字符

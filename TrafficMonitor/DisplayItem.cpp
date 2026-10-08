@@ -76,6 +76,7 @@ CString CommonDisplayItem::GetItemName() const
         case TDI_GPU_TEMP: return CCommon::LoadText(IDS_GPU_TEMPERATURE);
         case TDI_HDD_TEMP: return CCommon::LoadText(IDS_HDD_TEMPERATURE);
         case TDI_MAIN_BOARD_TEMP: return CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE);
+        case TDI_MEMORY_TEMP: return CCommon::LoadText(IDS_MEMORY_TEMPERATURE);
         case TDI_HDD_USAGE: return CCommon::LoadText(IDS_HDD_USAGE);
         case TDI_CPU_FREQ: return CCommon::LoadText(IDS_CPU_FREQ);
         case TDI_TODAY_TRAFFIC: return CCommon::LoadText(IDS_TRAFFIC_USED);
@@ -127,6 +128,7 @@ std::wstring CommonDisplayItem::DefaultString(bool is_main_window) const
             default_text = CCommon::LoadText(IDS_CPU_FREQ, _T(": "));
             break;
         case TDI_MEMORY:
+        case TDI_MEMORY_TEMP:
             default_text = CCommon::LoadText(IDS_MEMORY_DISP, _T(": "));
             break;
         case TDI_GPU_USAGE:
@@ -172,6 +174,7 @@ const wchar_t* CommonDisplayItem::GetItemIniKeyName() const
         case TDI_GPU_TEMP: return L"gpu_temp_string";
         case TDI_HDD_TEMP: return L"hdd_temp_string";
         case TDI_MAIN_BOARD_TEMP: return L"main_board_temp_string";
+        case TDI_MEMORY_TEMP: return L"memory_temp_string";
         case TDI_HDD_USAGE: return L"hdd_string";
         case TDI_TOTAL_SPEED: return L"total_speed_string";
         case TDI_CPU_FREQ: return L"cpu_freq_string";
@@ -260,6 +263,9 @@ CString CommonDisplayItem::GetItemValueText(bool is_main_window) const
         case TDI_MAIN_BOARD_TEMP:
             str_value = CCommon::TemperatureToString(theApp.m_main_board_temperature, *cfg_data);
             break;
+        case TDI_MEMORY_TEMP:
+            str_value = CCommon::TemperatureToString(theApp.m_memory_temperature, *cfg_data);
+            break;
         //CPU频率
         case TDI_CPU_FREQ:
             str_value = CCommon::FreqToString(theApp.m_cpu_freq, *cfg_data);
@@ -305,7 +311,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
         case TDI_MEMORY:
             sample_str = _T("51 %");
             break;
-        case TDI_CPU_TEMP: case TDI_GPU_TEMP: case TDI_HDD_TEMP: case TDI_MAIN_BOARD_TEMP:
+        case TDI_CPU_TEMP: case TDI_GPU_TEMP: case TDI_HDD_TEMP: case TDI_MAIN_BOARD_TEMP: case TDI_MEMORY_TEMP:
             sample_str = _T("40 °C");
             break;
         case TDI_CPU_FREQ:
@@ -380,6 +386,7 @@ CString CommonDisplayItem::GetItemValueSampleText(bool is_main_window) const
         case TDI_GPU_TEMP:
         case TDI_HDD_TEMP:
         case TDI_MAIN_BOARD_TEMP:
+        case TDI_MEMORY_TEMP:
         {
             if (theApp.m_taskbar_data.separate_value_unit_with_space)
                 sample_str = _T("99 °C");

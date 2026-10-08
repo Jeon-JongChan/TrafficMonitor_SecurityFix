@@ -100,6 +100,8 @@ public:
     afx_msg void OnBnClickedGpuCheck();
     afx_msg void OnBnClickedHddCheck();
     afx_msg void OnBnClickedMbdCheck();
+    /// <summary>시스템 RAM 센서 감지 설정을 변경한다.</summary>
+    afx_msg void OnBnClickedMemoryCheck();
     afx_msg void OnCbnSelchangeSelectCpuCombo();
     afx_msg void OnBnClickedPluginManageButton();
     afx_msg void OnBnClickedShowNotifyIconCheck();

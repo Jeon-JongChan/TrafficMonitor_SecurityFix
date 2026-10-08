@@ -236,7 +236,7 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
 
     // 绘制状态条
     if (type == TDI_CPU || type == TDI_MEMORY || type == TDI_GPU_USAGE || type == TDI_CPU_TEMP
-        || type == TDI_GPU_TEMP || type == TDI_HDD_TEMP || type == TDI_MAIN_BOARD_TEMP || type == TDI_HDD_USAGE
+        || type == TDI_GPU_TEMP || type == TDI_HDD_TEMP || type == TDI_MAIN_BOARD_TEMP || type == TDI_MEMORY_TEMP || type == TDI_HDD_USAGE
         || type == TDI_UP || type == TDI_DOWN || type == TDI_TOTAL_SPEED/* ||type==TDI_CPU_FREQ*/)
     {
         int figure_value{};
@@ -262,6 +262,9 @@ void CTaskBarDlg::DrawDisplayItem(IDrawCommon& drawer, DisplayItem type, CRect r
             break;
         case TDI_MAIN_BOARD_TEMP:
             figure_value = theApp.m_main_board_temperature;
+            break;
+        case TDI_MEMORY_TEMP:
+            figure_value = theApp.m_memory_temperature;
             break;
         case TDI_HDD_USAGE:
             figure_value = theApp.m_hdd_usage;
@@ -711,6 +714,11 @@ CString CTaskBarDlg::GetMouseTipsInfo()
         if (!IsItemShow(TDI_MAIN_BOARD_TEMP) && theApp.m_main_board_temperature > 0)
         {
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_taskbar_data));
+            tip_info += temp;
+        }
+        if (theApp.m_general_data.IsHardwareEnable(HI_MEMORY) && !IsItemShow(TDI_MEMORY_TEMP) && theApp.m_memory_temperature >= 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MEMORY_TEMPERATURE), CCommon::TemperatureToString(theApp.m_memory_temperature, theApp.m_taskbar_data));
             tip_info += temp;
         }
     }

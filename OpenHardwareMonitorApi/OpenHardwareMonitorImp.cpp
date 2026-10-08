@@ -4,6 +4,7 @@
 
 #include "OpenHardwareMonitorImp.h"
 #include <vector>
+#include <cmath>
 
 namespace OpenHardwareMonitorApi
 {
@@ -132,6 +133,21 @@ namespace OpenHardwareMonitorApi
         MonitorGlobal::Instance()->computer->IsMotherboardEnabled = enable;
     }
 
+    /// <summary>측정 가능한 DIMM 중 최고 온도를 반환한다.</summary>
+    float COpenHardwareMonitor::MemoryTemperature()
+    {
+        return m_memory_temperature;
+    }
+
+    /// <summary>시스템 RAM 센서 감지를 설정한다.</summary>
+    void COpenHardwareMonitor::SetMemoryEnable(bool enable)
+    {
+        MonitorGlobal::Instance()->computer->IsMemoryEnabled = enable;
+        // 비활성화 직후에도 이전 RAM 온도를 표시하지 않는다.
+        if (!enable)
+            m_memory_temperature = -1;
+    }
+
     /// <summary>유효한 CPU 클럭만 평균하고 값이 없으면 사용 불가 상태를 유지한다.</summary>
     bool COpenHardwareMonitor::GetCPUFreq(IHardware^ hardware, float& freq) {
         for (int i = 0; i < hardware->Sensors->Length; i++)
@@ -200,6 +216,10 @@ namespace OpenHardwareMonitorApi
             if (hardware->Sensors[i]->SensorType == SensorType::Temperature && hardware->Sensors[i]->Value.HasValue)
             {
                 float cur_temperture = Convert::ToDouble(hardware->Sensors[i]->Value);
+                // LHM 0.9.6의 DIMM 실측 센서는 인덱스 0이다. 해상도와 경고 한계값은 제외한다.
+                if (hardware->HardwareType == HardwareType::Memory
+                    && (hardware->Sensors[i]->Index != 0 || !std::isfinite(cur_temperture) || cur_temperture < 0))
+                    continue;
                 all_temperature.push_back(cur_temperture);
                 if (hardware->Sensors[i]->Name == temperature_name) //如果找到了名称为temperature_name的温度传感器，则将温度保存到core_temperature里
                     core_temperature = cur_temperture;
@@ -316,6 +336,7 @@ namespace OpenHardwareMonitorApi
         m_gpu_intel_temperature = -1;
         m_hdd_temperature = -1;
         m_main_board_temperature = -1;
+        m_memory_temperature = -1;
         m_gpu_nvidia_usage = -1;
         m_gpu_ati_usage = -1;
         m_gpu_intel_usage = -1;
@@ -411,6 +432,14 @@ namespace OpenHardwareMonitorApi
                     if (m_main_board_temperature < 0)
                         GetHardwareTemperature(computer->Hardware[i], m_main_board_temperature);
                     break;
+                case HardwareType::Memory:
+                {
+                    float temperature = -1;
+                    // 여러 DIMM 중 가장 뜨거운 모듈을 대표값으로 사용한다.
+                    if (GetHardwareTemperature(computer->Hardware[i], temperature) && temperature > m_memory_temperature)
+                        m_memory_temperature = temperature;
+                }
+                break;
                 default:
                     break;
                 }

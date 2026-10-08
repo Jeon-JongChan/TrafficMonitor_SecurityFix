@@ -216,6 +216,11 @@ CString CTrafficMonitorDlg::GetMouseTipsInfo()
             temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), CCommon::TemperatureToString(theApp.m_main_board_temperature, theApp.m_main_wnd_data));
             tip_info += temp;
         }
+        if (theApp.m_general_data.IsHardwareEnable(HI_MEMORY) && !skin_layout.GetItem(TDI_MEMORY_TEMP).show && theApp.m_memory_temperature >= 0)
+        {
+            temp.Format(_T("\r\n%s: %s"), CCommon::LoadText(IDS_MEMORY_TEMPERATURE), CCommon::TemperatureToString(theApp.m_memory_temperature, theApp.m_main_wnd_data));
+            tip_info += temp;
+        }
     }
 #endif
     if (!skin_layout.GetItem(TDI_HDD_USAGE).show && theApp.m_hdd_usage >= 0)
@@ -681,6 +686,8 @@ void CTrafficMonitorDlg::UpdateNotifyIconTip()
             strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_HDD_TEMPERATURE), static_cast<int>(theApp.m_hdd_temperature) });
         if (theApp.m_general_data.IsHardwareEnable(HI_MBD) && theApp.m_main_board_temperature > 0)
             strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_MAINBOARD_TEMPERATURE), static_cast<int>(theApp.m_main_board_temperature) });
+        if (theApp.m_general_data.IsHardwareEnable(HI_MEMORY) && theApp.m_memory_temperature >= 0)
+            strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> °C"), { CCommon::LoadText(IDS_MEMORY_TEMPERATURE), static_cast<int>(theApp.m_memory_temperature) });
         if (theApp.m_general_data.IsHardwareEnable(HI_HDD) && theApp.m_hdd_usage >= 0)
             strTip += CCommon::StringFormat(_T("\r\n<%1%>: <%2%> %"), { CCommon::LoadText(IDS_HDD_USAGE), theApp.m_hdd_usage });
     }
@@ -845,6 +852,7 @@ void CTrafficMonitorDlg::ApplySettings(COptionsDlg& optionsDlg)
         {
             CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
             theApp.m_pMonitor.reset();
+            theApp.m_memory_temperature = -1;
         }
         else if (theApp.m_pMonitor != nullptr)
         {
@@ -1065,7 +1073,8 @@ bool CTrafficMonitorDlg::IsTemperatureNeeded() const
     //return needed;
 
     return theApp.m_general_data.IsHardwareEnable(HI_CPU) || theApp.m_general_data.IsHardwareEnable(HI_GPU)
-        || theApp.m_general_data.IsHardwareEnable(HI_HDD) || theApp.m_general_data.IsHardwareEnable(HI_MBD);
+        || theApp.m_general_data.IsHardwareEnable(HI_HDD) || theApp.m_general_data.IsHardwareEnable(HI_MBD)
+        || theApp.m_general_data.IsHardwareEnable(HI_MEMORY);
 }
 
 // CTrafficMonitorDlg 消息处理程序
@@ -1490,6 +1499,7 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         theApp.m_gpu_temperature = theApp.m_pMonitor->GpuTemperature();
         //theApp.m_hdd_temperature = theApp.m_pMonitor->HDDTemperature();
         theApp.m_main_board_temperature = theApp.m_pMonitor->MainboardTemperature();
+        theApp.m_memory_temperature = theApp.m_pMonitor->MemoryTemperature();
         if (!gpu_usage_acquired)
             theApp.m_gpu_usage = theApp.m_pMonitor->GpuUsage();
         if (!cpu_freq_acquired)
