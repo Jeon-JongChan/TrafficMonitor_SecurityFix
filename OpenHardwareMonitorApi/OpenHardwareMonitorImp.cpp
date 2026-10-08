@@ -220,6 +220,10 @@ namespace OpenHardwareMonitorApi
                 if (hardware->HardwareType == HardwareType::Memory
                     && (hardware->Sensors[i]->Index != 0 || !std::isfinite(cur_temperture) || cur_temperture < 0))
                     continue;
+                // 저장장치의 Warning/Critical 센서는 실제 온도가 아닌 한계값(예: 70~85도)이므로 제외한다.
+                if (hardware->HardwareType == HardwareType::Storage
+                    && (hardware->Sensors[i]->Name->Contains(L"Warning") || hardware->Sensors[i]->Name->Contains(L"Critical")))
+                    continue;
                 all_temperature.push_back(cur_temperture);
                 if (hardware->Sensors[i]->Name == temperature_name) //如果找到了名称为temperature_name的温度传感器，则将温度保存到core_temperature里
                     core_temperature = cur_temperture;
@@ -232,6 +236,12 @@ namespace OpenHardwareMonitorApi
         }
         if (!all_temperature.empty())
         {
+            // 저장장치는 평균 대신 첫 센서(주 온도)를 사용한다. 컨트롤러 등 보조 센서가 평균을 올리는 것을 방지.
+            if (hardware->HardwareType == HardwareType::Storage)
+            {
+                temperature = all_temperature.front();
+                return true;
+            }
             //如果有多个温度传感器，则取平均值
             float sum{};
             for (auto i : all_temperature)
