@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "TaskBarDlg.h"
 class CWineTaskbarDlg :
     public CTaskBarDlg
 {
 private:
-    // Í¨¹ý CTaskBarDlg ¼Ì³Ð
+    // é€šè¿‡ CTaskBarDlg ç»§æ‰¿
     void InitTaskbarWnd() override;
     void AdjustTaskbarWndPos(bool force_adjust) override;
     void ResetTaskbarPos() override;

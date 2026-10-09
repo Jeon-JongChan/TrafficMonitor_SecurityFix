@@ -1,11 +1,15 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "GpuUsage.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-// CPdhGPUUsage 实现
+// CPdhGPUUsage 구현
 ///////////////////////////////////////////////////////////////////////////////////////////
+
+/// <summary>
+/// 작업 관리자와 동일한 전체 GPU 엔진 카운터 경로로 초기화합니다.
+/// </summary>
 CPdhGPUUsage::CPdhGPUUsage()
-: CPdhQuery(_T("\\GPU Engine(*)\\Utilization Percentage"))
+    : CPdhQuery(_T("\\GPU Engine(*)\\Utilization Percentage"))
 {
 }
 
@@ -13,6 +17,10 @@ CPdhGPUUsage::~CPdhGPUUsage()
 {
 }
 
+/// <summary>
+/// GPU 이용률을 계산하여 반환합니다.
+/// Windows 작업 관리자와 동일하게 엔진 종류별(3D, VideoDecode, Compute 등)로 합산 후 최대값을 선택합니다.
+/// </summary>
 bool CPdhGPUUsage::GetGpuUsage(int& usage)
 {
     if (isInitialized)
@@ -22,7 +30,7 @@ bool CPdhGPUUsage::GetGpuUsage(int& usage)
         {
             if (!valueItems.empty())
             {
-                //获取所有类型的利用率
+                // 엔진 타입별 합산 후 최대값 선택
                 std::map<std::wstring, double> gpu_usage_map;
                 for (const auto& item : valueItems)
                 {
@@ -32,16 +40,14 @@ bool CPdhGPUUsage::GetGpuUsage(int& usage)
                         item_name = item.name.substr(index + 1);
                     gpu_usage_map[item_name] += item.value;
                 }
-                //查找所有类型中最大的值作为总利用率（同Windows任务管理器的处理）
                 double max_value = 0;
                 for (const auto& item : gpu_usage_map)
                 {
                     if (item.second > max_value)
                         max_value = item.second;
                 }
-
-                usage = static_cast<int>(max_value + 0.5);  // 四舍五入
-                usage = min(max(usage, 0), 100);        // 限制在0-100范围
+                usage = static_cast<int>(max_value + 0.5);
+                usage = min(max(usage, 0), 100);
                 return true;
             }
         }

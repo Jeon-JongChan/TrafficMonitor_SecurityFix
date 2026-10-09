@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "TabDlg.h"
 #include "SpinEdit.h"
 #include "ComboBox2.h"
@@ -27,12 +27,15 @@ public:
     bool IsAutoRunModified() const { return m_auto_run_modified; }
     bool IsShowAllInterfaceModified() const { return m_show_all_interface_modified; }
     bool IsMonitorTimeSpanModified() const;
+    /// <summary>온도 수집 주기 변경 여부를 반환합니다.</summary>
+    bool IsTemperatureTimeSpanModified() const;
     //bool IsTaskbarItemModified() const { return m_taskbar_item_modified; }
 
 protected:
     bool m_auto_run_modified{ false };      //如果更改了开机自动运行的设置，则会置为true
     bool m_show_all_interface_modified{ false };
     int m_monitor_time_span_ori{};
+    int m_temperature_time_span_ori{};
     int m_update_source_ori{};
     //bool m_taskbar_item_modified{ false };
     wstring m_auto_run_path;
@@ -44,6 +47,7 @@ protected:
     CComboBox2 m_language_combo;
     CToolTipCtrl m_toolTip;
     CSpinEdit m_monitor_span_edit;
+    CSpinEdit m_temperature_span_edit;
     CSpinEdit m_cpu_temp_tip_edit;
     CSpinEdit m_gpu_temp_tip_edit;
     CSpinEdit m_hdd_temp_tip_edit;
@@ -108,6 +112,9 @@ public:
     afx_msg void OnBnClickedSelectConnectionsButton();
     afx_msg void OnBnClickedResetAutoRunButton();
     afx_msg void OnEnChangeMonitorSpanEdit();
+    /// <summary>온도 수집 주기 변경 핸들러</summary>
+    afx_msg void OnEnKillfocusTemperatureSpanEdit();
+    afx_msg void OnEnChangeTemperatureSpanEdit();
 protected:
 public:
     afx_msg void OnBnClickedAutoRunMethodRegestryRadio();

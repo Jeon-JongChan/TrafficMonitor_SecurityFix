@@ -1,4 +1,4 @@
-﻿
+
 // TrafficMonitorDlg.cpp : 实现文件
 //
 
@@ -1425,13 +1425,14 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
         cpu_freq_acquired = true;
     //}
 
-    //获取GPU利用率
-    if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_GPU))
+    // GPU 이용률 획득 (PDH 전체 엔진 기반 정확도 측정)
+    if (m_gpu_usage_helper.GetGpuUsage(theApp.m_gpu_usage))
     {
-        if (m_gpu_usage_helper.GetGpuUsage(theApp.m_gpu_usage))
-            gpu_usage_acquired = true;
-        else
-            theApp.m_gpu_usage = -1;
+        gpu_usage_acquired = true;
+    }
+    else if (lite_version /*|| is_arm64ec*/ || !theApp.m_general_data.IsHardwareEnable(HI_GPU))
+    {
+        theApp.m_gpu_usage = -1;
     }
 
     //获取硬盘利用率
@@ -1472,9 +1473,17 @@ void CTrafficMonitorDlg::DoMonitorAcquisition()
     theApp.m_total_memory = static_cast<int>(statex.ullTotalPhys / 1024);
 
 #ifndef WITHOUT_TEMPERATURE
+    // 하드웨어 온도 스케쥴링 주기 검사
+    // ponytail: GetTickCount64()로 주기 제어, 오버헤드 없이 정확한 시간 간격 보장
+    static ULONGLONG last_temp_acquire_time = 0;
+    ULONGLONG cur_tick = GetTickCount64();
+    bool should_acquire_temp = (last_temp_acquire_time == 0 ||
+        (cur_tick - last_temp_acquire_time >= static_cast<ULONGLONG>(theApp.m_general_data.temperature_time_span)));
+
     //获取温度
-    if (IsTemperatureNeeded() && theApp.m_pMonitor != nullptr)
+    if (IsTemperatureNeeded() && theApp.m_pMonitor != nullptr && should_acquire_temp)
     {
+        last_temp_acquire_time = cur_tick;
         CSingleLock sync(&theApp.m_minitor_lib_critical, TRUE);
         CString error_info = CCommon::LoadText(IDS_HARDWARE_INFO_ACQUIRE_FAILED_ERROR);
 

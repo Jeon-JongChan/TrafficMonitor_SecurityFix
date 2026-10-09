@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "CommonData.h"
 class CHistoryTrafficFile
 {
@@ -7,24 +7,24 @@ public:
 	~CHistoryTrafficFile();
 
 	void Save() const;
-	void SaveTodayOnly() const;	// ½ö¸üĞÂµÚÒ»ĞĞ£¨lines¼ÆÊı£©ºÍ½ñÌìµÄ¼ÇÂ¼£¨µÚ¶şĞĞ£©£¬ÓÃÓÚÆµ·±±£´æÊ±¼õÉÙI/O
+	void SaveTodayOnly() const;	// ä»…æ›´æ–°ç¬¬ä¸€è¡Œï¼ˆlinesè®¡æ•°ï¼‰å’Œä»Šå¤©çš„è®°å½•ï¼ˆç¬¬äºŒè¡Œï¼‰ï¼Œç”¨äºé¢‘ç¹ä¿å­˜æ—¶å‡å°‘I/O
 	void Load();
-	void LoadSize();			//½ö¶ÁÈ¡ÎÄ¼şµÄ´óĞ¡
-	void Merge(const CHistoryTrafficFile& history_traffic, bool ignore_same_data = false);		//ºÏ²¢ÁíÒ»¸öCHistoryTrafficFile¶ÔÏó¡£Èç¹ûignore_same_dataÎªtrue£¬ÔòºöÂÔÏàÍ¬ÈÕÆÚµÄÏî£¬·ñÔò½«ÏàÍ¬ÈÕÆÚµÄÁ÷Á¿Êı¾İÏà¼Ó
-	void OnDateChanged();		//ÈÕÆÚ¸Ä±äÊ±µ÷ÓÃ£¬½«½ñÌìµÄ¼ÇÂ¼ÒÆµ½ÀúÊ·¼ÇÂ¼£¬´´½¨ĞÂµÄ½ñÌìµÄ¼ÇÂ¼
+	void LoadSize();			//ä»…è¯»å–æ–‡ä»¶çš„å¤§å°
+	void Merge(const CHistoryTrafficFile& history_traffic, bool ignore_same_data = false);		//åˆå¹¶å¦ä¸€ä¸ªCHistoryTrafficFileå¯¹è±¡ã€‚å¦‚æœignore_same_dataä¸ºtrueï¼Œåˆ™å¿½ç•¥ç›¸åŒæ—¥æœŸçš„é¡¹ï¼Œå¦åˆ™å°†ç›¸åŒæ—¥æœŸçš„æµé‡æ•°æ®ç›¸åŠ 
+	void OnDateChanged();		//æ—¥æœŸæ”¹å˜æ—¶è°ƒç”¨ï¼Œå°†ä»Šå¤©çš„è®°å½•ç§»åˆ°å†å²è®°å½•ï¼Œåˆ›å»ºæ–°çš„ä»Šå¤©çš„è®°å½•
 
 	const wstring& GetFilePath() const { return m_file_path; }
 	const void SetFilePath(const wstring& file_path) { m_file_path = file_path; }
 	
-	// »ñÈ¡ÍêÕûÁ÷Á¿ÁĞ±í£¨ÓÃÓÚÍ³¼Æ¹¦ÄÜ£©£¬·µ»ØdequeÒıÓÃÒÔ¼æÈİÏÖÓĞ´úÂë
+	// è·å–å®Œæ•´æµé‡åˆ—è¡¨ï¼ˆç”¨äºç»Ÿè®¡åŠŸèƒ½ï¼‰ï¼Œè¿”å›dequeå¼•ç”¨ä»¥å…¼å®¹ç°æœ‰ä»£ç 
 	deque<HistoryTraffic>& GetTraffics() { if (m_cache_dirty) UpdateCache(); return m_traffics_cache; }
 	const deque<HistoryTraffic>& GetTraffics() const { if (m_cache_dirty) UpdateCache(); return m_traffics_cache; }
 	
-	// »ñÈ¡½ñÌìµÄ¼ÇÂ¼£¨µÚÒ»Ìõ£©
+	// è·å–ä»Šå¤©çš„è®°å½•ï¼ˆç¬¬ä¸€æ¡ï¼‰
 	HistoryTraffic& GetTodayTraffic() { return m_today_traffic; }
 	const HistoryTraffic& GetTodayTraffic() const { return m_today_traffic; }
 	
-	// »ñÈ¡ÀúÊ·¼ÇÂ¼Á´±í
+	// è·å–å†å²è®°å½•é“¾è¡¨
 	const list<HistoryTraffic>& GetHistoryTraffics() const { return m_history_traffics; }
 	
 	__int64 GetTodayUpTraffic() const { return m_today_up_traffic; }
@@ -32,21 +32,21 @@ public:
 	size_t Size() const { return m_size; }
 
 private:
-	void MormalizeData();		//½«ÀúÊ·Á÷Á¿Êı¾İÅÅĞò²¢ºÏ²¢ÏàÍ¬Ïî
-	bool IsTodayRecord() const;	//¼ì²é½ñÌìµÄ¼ÇÂ¼ÈÕÆÚÊÇ·ñÕıÈ·
-	void UpdateCache() const;	//¸üĞÂ»º´æ£¨ÓÃÓÚÍ³¼Æ¹¦ÄÜ£©
-	void WriteTrafficRecord(ofstream& file, const HistoryTraffic& traffic) const;	//Ğ´ÈëÒ»ÌõÁ÷Á¿¼ÇÂ¼µ½ÎÄ¼ş
-	HistoryTraffic CreateTodayTraffic() const;	//´´½¨½ñÌìµÄ¼ÇÂ¼£¨ÈÕÆÚÎªµ±Ç°ÈÕÆÚ£¬Á÷Á¿Îª0£©
-	void InvalidateCache() const { m_cache_dirty = true; }	//±ê¼Ç»º´æ¹ıÆÚ
+	void MormalizeData();		//å°†å†å²æµé‡æ•°æ®æ’åºå¹¶åˆå¹¶ç›¸åŒé¡¹
+	bool IsTodayRecord() const;	//æ£€æŸ¥ä»Šå¤©çš„è®°å½•æ—¥æœŸæ˜¯å¦æ­£ç¡®
+	void UpdateCache() const;	//æ›´æ–°ç¼“å­˜ï¼ˆç”¨äºç»Ÿè®¡åŠŸèƒ½ï¼‰
+	void WriteTrafficRecord(ofstream& file, const HistoryTraffic& traffic) const;	//å†™å…¥ä¸€æ¡æµé‡è®°å½•åˆ°æ–‡ä»¶
+	HistoryTraffic CreateTodayTraffic() const;	//åˆ›å»ºä»Šå¤©çš„è®°å½•ï¼ˆæ—¥æœŸä¸ºå½“å‰æ—¥æœŸï¼Œæµé‡ä¸º0ï¼‰
+	void InvalidateCache() const { m_cache_dirty = true; }	//æ ‡è®°ç¼“å­˜è¿‡æœŸ
 
 private:
 	wstring m_file_path;
-	HistoryTraffic m_today_traffic;        // ½ñÌìµÄ¼ÇÂ¼£¨µ¥¶À´æ´¢£¬Æµ·±¸üĞÂ£©
-	list<HistoryTraffic> m_history_traffics;	// ÀúÊ·¼ÇÂ¼Á´±í£¨°´ÈÕÆÚ´Ó´óµ½Ğ¡ÅÅĞò£©
-	mutable deque<HistoryTraffic> m_traffics_cache;	// »º´æ£ººÏ²¢ºóµÄÍêÕûÁĞ±í£¨ÓÃÓÚÍ³¼Æ¹¦ÄÜ£¬°´Ğè¸üĞÂ£©
-	mutable bool m_cache_dirty{ true };	// »º´æÊÇ·ñ¹ıÆÚ£¨ĞèÒª¸üĞÂ£©
-	__int64 m_today_up_traffic{};	//½ñÌìÒÑÊ¹ÓÃµÄÉÏ´«Á÷Á¿
-	__int64 m_today_down_traffic{};	//½ñÌìÒÑÊ¹ÓÃµÄÏÂÔØÁ÷Á¿
-	size_t m_size{};				//Á÷Á¿Êı¾İµÄÊıÁ¿
+	HistoryTraffic m_today_traffic;        // ä»Šå¤©çš„è®°å½•ï¼ˆå•ç‹¬å­˜å‚¨ï¼Œé¢‘ç¹æ›´æ–°ï¼‰
+	list<HistoryTraffic> m_history_traffics;	// å†å²è®°å½•é“¾è¡¨ï¼ˆæŒ‰æ—¥æœŸä»å¤§åˆ°å°æ’åºï¼‰
+	mutable deque<HistoryTraffic> m_traffics_cache;	// ç¼“å­˜ï¼šåˆå¹¶åçš„å®Œæ•´åˆ—è¡¨ï¼ˆç”¨äºç»Ÿè®¡åŠŸèƒ½ï¼ŒæŒ‰éœ€æ›´æ–°ï¼‰
+	mutable bool m_cache_dirty{ true };	// ç¼“å­˜æ˜¯å¦è¿‡æœŸï¼ˆéœ€è¦æ›´æ–°ï¼‰
+	__int64 m_today_up_traffic{};	//ä»Šå¤©å·²ä½¿ç”¨çš„ä¸Šä¼ æµé‡
+	__int64 m_today_down_traffic{};	//ä»Šå¤©å·²ä½¿ç”¨çš„ä¸‹è½½æµé‡
+	size_t m_size{};				//æµé‡æ•°æ®çš„æ•°é‡
 };
 

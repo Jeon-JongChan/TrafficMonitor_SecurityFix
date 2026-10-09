@@ -9,7 +9,7 @@ CPdhQuery::CPdhQuery(LPCTSTR _fullCounterPath)
 
 CPdhQuery::~CPdhQuery()
 {
-    //¹Ø±Õ²éÑ¯
+    //å…³é—­æŸ¥è¯¢
     PdhCloseQuery(query);
 }
 
@@ -19,14 +19,14 @@ bool CPdhQuery::Initialize()
         return true;
 
     PDH_STATUS status;
-    //´ò¿ª²éÑ¯
+    //æ‰“å¼€æŸ¥è¯¢
     status = PdhOpenQuery(NULL, NULL, &query);
     if (status != ERROR_SUCCESS)
         return false;
 
-    //Ìí¼Ó¼ÆÊıÆ÷
+    //æ·»åŠ è®¡æ•°å™¨
     status = PdhAddCounter(query, fullCounterPath.GetString(), NULL, &counter);
-    //ÏÈµ÷ÓÃPdhAddCounter£¬Èç¹ûÊ§°ÜÊ¹ÓÃPdhAddEnglishCounterÔÙÊÔÒ»´Î
+    //å…ˆè°ƒç”¨PdhAddCounterï¼Œå¦‚æœå¤±è´¥ä½¿ç”¨PdhAddEnglishCounterå†è¯•ä¸€æ¬¡
     if (status != ERROR_SUCCESS)
     {
         status = PdhAddEnglishCounter(query, fullCounterPath.GetString(), NULL, &counter);
@@ -38,7 +38,7 @@ bool CPdhQuery::Initialize()
         }
     }
 
-    //³õÊ¼»¯¼ÆÊıÆ÷
+    //åˆå§‹åŒ–è®¡æ•°å™¨
     PdhCollectQueryData(query);
     isInitialized = true;
     return true;
@@ -49,7 +49,7 @@ bool CPdhQuery::QueryValue(double& value)
     if (!isInitialized)
         return false;
 
-    //¸üĞÂÊı¾İ
+    //æ›´æ–°æ•°æ®
     PdhCollectQueryData(query);
     PDH_FMT_COUNTERVALUE pdhValue;
     DWORD dwValue;
@@ -68,7 +68,7 @@ bool CPdhQuery::QueryValues(std::vector<CounterValueItem>& values)
     if (!isInitialized)
         return false;
 
-    //¸üĞÂÊı¾İ
+    //æ›´æ–°æ•°æ®
     PdhCollectQueryData(query);
     DWORD dwBufferSize = 0;         // Size of the pItems buffer
     DWORD dwItemCount = 0;          // Number of items in the pItems buffer
@@ -93,6 +93,8 @@ bool CPdhQuery::QueryValues(std::vector<CounterValueItem>& values)
             }
             else
             {
+                // ì‹¤íŒ¨ ì‹œì—ë„ í• ë‹¹ëœ ë²„í¼ í•´ì œ
+                free(pItems);
                 return false;
             }
 

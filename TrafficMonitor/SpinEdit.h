@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 // 这是一个带微调按钮的Edit控件，在CEdit右侧附加一个微调按钮，请预留空间
 // CSpinEdit
 
@@ -13,7 +13,8 @@ public:
     CSpinEdit();
     virtual ~CSpinEdit();
 
-    void SetRange(short lower, short upper, short step = 1);        // 设置文本框中的数值范围
+    /// <summary>텍스트 상자의 수치 범위를 32비트 정수(int)로 설정합니다.</summary>
+    void SetRange(int lower, int upper, int step = 1);        // 设置文本框中的数值范围
     void SetValue(int value);                       //设置文本框中的数值
     int GetValue();                                 //获取文本框中的数值
     void SetMouseWheelEnable(bool enable);          //设置是否允许响应鼠标滚轮
@@ -21,6 +22,8 @@ public:
 protected:
     CSpinButtonCtrl m_spin;                         //微调按钮控件
     int m_step{ 1 };
+    int m_lower{ 0 };
+    int m_upper{ 999 };
     int m_spin_width{};
     bool m_mouse_wheel_enable{ true };
 

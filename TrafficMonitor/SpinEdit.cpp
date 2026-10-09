@@ -1,4 +1,4 @@
-﻿// SpinEdit.cpp: 实现文件
+// SpinEdit.cpp: 实现文件
 //
 
 #include "stdafx.h"
@@ -18,22 +18,52 @@ CSpinEdit::~CSpinEdit()
 {
 }
 
-void CSpinEdit::SetRange(short lower, short upper, short step)
+/// <summary>
+/// 텍스트 상자 및 스핀 컨트롤의 수치 범위와 증감 단위를 설정합니다.
+/// </summary>
+void CSpinEdit::SetRange(int lower, int upper, int step)
 {
-    m_step = step;
+    m_lower = lower;
+    m_upper = upper;
+    m_step = (step > 0) ? step : 1;
     if (m_spin.GetSafeHwnd() != NULL)
-        m_spin.SetRange(lower, upper);
+        m_spin.SetRange32(lower, upper);
 }
 
+/// <summary>
+/// 에디트 상자의 텍스트와 스핀 컨트롤의 위치를 동시에 갱신합니다.
+/// 유효 범위를 벗어날 경우 자동으로 클램핑합니다.
+/// </summary>
 void CSpinEdit::SetValue(int value)
 {
     ASSERT(m_step != 0);    // 应当先设置Range
+    // 설정된 범위 내로 클램핑
+    if (m_lower != m_upper)
+    {
+        if (value < m_lower) value = m_lower;
+        if (value > m_upper) value = m_upper;
+    }
     if (m_spin.GetSafeHwnd() != NULL)
-        m_spin.SetPos(value);
+        m_spin.SetPos32(value);
+    CString str;
+    str.Format(_T("%d"), value);
+    SetWindowText(str);
 }
 
+/// <summary>
+/// 에디트 상자에 입력된 텍스트를 우선 파싱하여 정수값을 반환합니다.
+/// 텍스트가 비어있을 경우 스핀 컨트롤의 현재 위치를 반환합니다.
+/// </summary>
 int CSpinEdit::GetValue()
 {
+    CString str;
+    GetWindowText(str);
+    str.Replace(_T(","), _T(""));
+    str.Trim();
+    if (!str.IsEmpty())
+    {
+        return _ttoi(str.GetString());
+    }
     if (m_spin.GetSafeHwnd() != NULL)
         return m_spin.GetPos32();
     else

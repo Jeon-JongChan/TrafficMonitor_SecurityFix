@@ -1,10 +1,10 @@
-/*һ��������ʾͼƬ�ľ�̬�ؼ�
-����Ҫ��ʱ�����SetPicture()�������þ�̬ͼƬ��
-�ؼ����ػ�ʱ���򸸴��ڷ���WM_CONTROL_REPAINT��Ϣ��
-��ͨ��wParam���ݵ�ǰ�ؼ���CWndָ�룬ͨ��lParam����CDC��ָ��
+﻿/*一个用于显示图片的静态控件
+在需要的时候调用SetPicture()函数设置静态图片。
+控件在重绘时会向父窗口发送WM_CONTROL_REPAINT消息，
+并通过wParam传递当前控件的CWnd指针，通过lParam传递CDC的指针
 */
 #pragma once
-#define WM_CONTROL_REPAINT (WM_USER + 1003)		//�ؼ��ػ���Ϣ
+#define WM_CONTROL_REPAINT (WM_USER + 1003)		//控件重绘消息
 
 class CPictureStatic : public CStatic
 {

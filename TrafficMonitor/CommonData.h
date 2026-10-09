@@ -1,4 +1,4 @@
-﻿//此文件包含全局结构体、枚举类型的定义
+//此文件包含全局结构体、枚举类型的定义
 #pragma once
 #include "stdafx.h"
 #include "TaskbarItemOrderHelper.h"
@@ -388,7 +388,8 @@ struct GeneralSettingData
     CpuUsageAcquireMethod cpu_usage_acquire_method{};  //获取CPU利用率的方式
 
     bool portable_mode{ false };        //便携模式，如果为true，则程序所有数据都保存到exe所在目录下，否则保存到Appdata\Romaing目录下
-    int monitor_time_span{ 1000 };    //监控的时间间隔
+    int monitor_time_span{ 1000 };    // 일반 모니터링 시간 간격 (ms)
+    int temperature_time_span{ 5000 }; // 하드웨어 온도 수집 간격 (ms, 기본값 5초)
 
     std::wstring hard_disk_name;        //要监控的硬盘名称
     std::wstring cpu_core_name;         //要监控的CPU核心的名称

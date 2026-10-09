@@ -1,4 +1,4 @@
-﻿// GeneralSettingsDlg.cpp : implementation file
+// GeneralSettingsDlg.cpp : implementation file
 //
 
 #include "stdafx.h"
@@ -53,6 +53,7 @@ void CGeneralSettingsDlg::SetControlMouseWheelEnable(bool enable)
     m_traffic_tip_edit.SetMouseWheelEnable(enable);
     m_memory_tip_edit.SetMouseWheelEnable(enable);
     m_monitor_span_edit.SetMouseWheelEnable(enable);
+    m_temperature_span_edit.SetMouseWheelEnable(enable);
     m_cpu_temp_tip_edit.SetMouseWheelEnable(enable);
     m_gpu_temp_tip_edit.SetMouseWheelEnable(enable);
     m_hdd_temp_tip_edit.SetMouseWheelEnable(enable);
@@ -65,6 +66,7 @@ void CGeneralSettingsDlg::OnSettingsApplied()
 {
     //当设置被应用时，重置xxxx_ori的值
     m_monitor_time_span_ori = m_data.monitor_time_span;
+    m_temperature_time_span_ori = m_data.temperature_time_span;
     m_update_source_ori = m_data.update_source;
 }
 
@@ -129,6 +131,11 @@ bool CGeneralSettingsDlg::InitializeControls()
         { CtrlTextInfo::L1, IDC_RESTORE_DEFAULT_TIME_SPAN_BUTTON, CtrlTextInfo::W16 }
     });
     RepositionTextBasedControls({
+        { CtrlTextInfo::L4, IDC_TEMP_INTERVAL_STATIC },
+        { CtrlTextInfo::L3, IDC_TEMP_SPAN_EDIT },
+        { CtrlTextInfo::L2, IDC_TEMP_MILLISECONDS_STATIC }
+    });
+    RepositionTextBasedControls({
         { CtrlTextInfo::L4, IDC_PLUGIN_MANAGE_BUTTON, CtrlTextInfo::W32 }
     });
 
@@ -181,6 +188,11 @@ bool CGeneralSettingsDlg::IsMonitorTimeSpanModified() const
     return m_data.monitor_time_span != m_monitor_time_span_ori;
 }
 
+bool CGeneralSettingsDlg::IsTemperatureTimeSpanModified() const
+{
+    return m_data.temperature_time_span != m_temperature_time_span_ori;
+}
+
 void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
 {
     CTabDlg::DoDataExchange(pDX);
@@ -189,6 +201,7 @@ void CGeneralSettingsDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_MEMORY_USAGE_TIP_EDIT, m_memory_tip_edit);
     DDX_Control(pDX, IDC_LANGUAGE_COMBO, m_language_combo);
     DDX_Control(pDX, IDC_MONITOR_SPAN_EDIT, m_monitor_span_edit);
+    DDX_Control(pDX, IDC_TEMP_SPAN_EDIT, m_temperature_span_edit);
     DDX_Control(pDX, IDC_CPU_TEMP_TIP_EDIT, m_cpu_temp_tip_edit);
     DDX_Control(pDX, IDC_GPU_TEMP_TIP_EDIT, m_gpu_temp_tip_edit);
     DDX_Control(pDX, IDC_HDD_TIP_EDIT, m_hdd_temp_tip_edit);
@@ -252,6 +265,8 @@ BEGIN_MESSAGE_MAP(CGeneralSettingsDlg, CTabDlg)
     ON_BN_CLICKED(IDC_SELECT_CONNECTIONS_BUTTON, &CGeneralSettingsDlg::OnBnClickedSelectConnectionsButton)
     ON_BN_CLICKED(IDC_RESET_AUTO_RUN_BUTTON, &CGeneralSettingsDlg::OnBnClickedResetAutoRunButton)
     ON_EN_CHANGE(IDC_MONITOR_SPAN_EDIT, &CGeneralSettingsDlg::OnEnChangeMonitorSpanEdit)
+    ON_EN_KILLFOCUS(IDC_TEMP_SPAN_EDIT, &CGeneralSettingsDlg::OnEnKillfocusTemperatureSpanEdit)
+    ON_EN_CHANGE(IDC_TEMP_SPAN_EDIT, &CGeneralSettingsDlg::OnEnChangeTemperatureSpanEdit)
     ON_MESSAGE(WM_SPIN_EDIT_POS_CHANGED, &CGeneralSettingsDlg::OnSpinEditPosChanged)
     ON_BN_CLICKED(IDC_AUTO_RUN_METHOD_REGESTRY_RADIO, &CGeneralSettingsDlg::OnBnClickedAutoRunMethodRegestryRadio)
     ON_BN_CLICKED(IDC_AUTO_RUN_METHOD_TASK_SCHEDULE_RADIO, &CGeneralSettingsDlg::OnBnClickedAutoRunMethodTaskScheduleRadio)
@@ -398,7 +413,11 @@ BOOL CGeneralSettingsDlg::OnInitDialog()
     m_monitor_span_edit.SetRange(MONITOR_TIME_SPAN_MIN, MONITOR_TIME_SPAN_MAX, MONITOR_SPAN_STEP);
     m_monitor_span_edit.SetValue(m_data.monitor_time_span);
 
+    m_temperature_span_edit.SetRange(500, 60000, 500);
+    m_temperature_span_edit.SetValue(m_data.temperature_time_span);
+
     m_monitor_time_span_ori = m_data.monitor_time_span;
+    m_temperature_time_span_ori = m_data.temperature_time_span;
     m_update_source_ori = m_data.update_source;
 
     if (CTrafficMonitorDlg::Instance()->IsGetDiskUsageByPdh())
@@ -556,6 +575,14 @@ void CGeneralSettingsDlg::OnOK()
 
     //m_taskbar_item_modified = (theApp.m_taskbar_data.display_item != taskbar_displat_item_ori);
 
+    m_data.temperature_time_span = m_temperature_span_edit.GetValue();
+    if (m_data.temperature_time_span < 500)
+        m_data.temperature_time_span = 500;
+    else if (m_data.temperature_time_span > 60000)
+        m_data.temperature_time_span = 60000;
+    else
+        m_data.temperature_time_span = ((m_data.temperature_time_span + 250) / 500) * 500;
+
     CTabDlg::OnOK();
 }
 
@@ -623,34 +650,19 @@ void CGeneralSettingsDlg::OnBnClickedUsePdhNormalizedRadio()
     m_data.cpu_usage_acquire_method = GeneralSettingData::CA_PDH_NORMALIZED;
 }
 
+/// <summary>
+/// 스핀 버튼(CSpinEdit)으로 수치가 변경되었을 때 해당 설정 데이터를 즉시 동기화합니다.
+/// </summary>
 afx_msg LRESULT CGeneralSettingsDlg::OnSpinEditPosChanged(WPARAM wParam, LPARAM lParam)
 {
-    CSpinButtonCtrl* pSpin = (CSpinButtonCtrl*)wParam;
-    if (pSpin == nullptr)
-        return 0;
-    CWnd* pEdit = pSpin->GetBuddy();
-    if (pEdit == &m_monitor_span_edit)       //当用户点击了“监控时间间隔”的微调按钮时
+    CWnd* pEdit = reinterpret_cast<CWnd*>(wParam);
+    if (pEdit == &m_monitor_span_edit)
     {
-        LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(lParam);
-        if (pNMUpDown->iDelta == -1)
-        {
-            // 用户按下了spin控件的向下箭头
-            int value = m_monitor_span_edit.GetValue();
-            value -= MONITOR_SPAN_STEP;
-            value /= MONITOR_SPAN_STEP;
-            value *= MONITOR_SPAN_STEP;
-            m_monitor_span_edit.SetValue(value);
-        }
-        else if (pNMUpDown->iDelta == 1)
-        {
-            // 用户按下了spin控件的向上箭头
-            int value = m_monitor_span_edit.GetValue();
-            value += MONITOR_SPAN_STEP;
-            value /= MONITOR_SPAN_STEP;
-            value *= MONITOR_SPAN_STEP;
-            m_monitor_span_edit.SetValue(value);
-        }
-        pNMUpDown->iDelta = 0;
+        m_data.monitor_time_span = m_monitor_span_edit.GetValue();
+    }
+    else if (pEdit == &m_temperature_span_edit)
+    {
+        m_data.temperature_time_span = m_temperature_span_edit.GetValue();
     }
     return 0;
 }
@@ -740,6 +752,9 @@ void CGeneralSettingsDlg::OnBnClickedRestoreDefaultTimeSpanButton()
 {
     // TODO: 在此添加控件通知处理程序代码
     m_monitor_span_edit.SetValue(1000);
+    m_data.monitor_time_span = 1000;
+    m_temperature_span_edit.SetValue(5000);
+    m_data.temperature_time_span = 5000;
 }
 
 
@@ -890,3 +905,38 @@ void CGeneralSettingsDlg::OnBnClickedAutoRunMethodTaskScheduleRadio()
     m_auto_run_modified = true;
     SetControlEnable();
 }
+
+/// <summary>
+/// 온도 수집 주기 입력 상자의 포커스가 벗어났을 때 입력값을 검증하고 정규화합니다.
+/// 유효 범위: 500ms ~ 60000ms, 500ms 단위 정규화.
+/// </summary>
+void CGeneralSettingsDlg::OnEnKillfocusTemperatureSpanEdit()
+{
+    int value = m_temperature_span_edit.GetValue();
+
+    // 유효 범위 500ms ~ 60000ms 클램핑
+    if (value < 500)
+    {
+        value = 500;
+    }
+    else if (value > 60000)
+    {
+        value = 60000;
+    }
+    else
+    {
+        // 500ms 단위로 반올림 정규화
+        value = ((value + 250) / 500) * 500;
+    }
+    m_temperature_span_edit.SetValue(value);
+    m_data.temperature_time_span = value;
+}
+
+/// <summary>
+/// 온도 수집 주기 변경 시 설정 데이터에 즉시 반영합니다.
+/// </summary>
+void CGeneralSettingsDlg::OnEnChangeTemperatureSpanEdit()
+{
+    m_data.temperature_time_span = m_temperature_span_edit.GetValue();
+}
+
