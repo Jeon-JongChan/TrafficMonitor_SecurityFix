@@ -471,32 +471,36 @@ void CTrafficMonitorApp::LoadPluginDisabledSettings()
     m_cfg_data.plugin_disabled.FromString(ini.GetString(L"config", L"plugin_disabled", L""));
 }
 
+/**
+ * @brief 전역 설정(포터블 모드 등)을 로드합니다.
+ * 기본 동작은 포터블 모드(true)이며, 실행 파일 디렉터리에 쓰기 권한이 없는 경우에만 AppData로 대체합니다.
+ */
 void CTrafficMonitorApp::LoadGlobalConfig()
 {
-    bool portable_mode_default{ false };
+    // 기본값은 포터블 모드(true)로 설정
+    bool portable_mode_default{ true };
     wstring global_cfg_path{ m_module_dir + L"global_cfg.ini" };
-    if (!CCommon::FileExist(global_cfg_path.c_str()))       //如果global_cfg.ini不存在，则根据AppData/Roaming/TrafficMonitor目录下是否存在config.ini来判断配置文件的保存位置
-    {
-        portable_mode_default = !CCommon::FileExist((m_appdata_dir + L"config.ini").c_str());
-    }
 
     CIniHelper ini{ global_cfg_path };
     m_general_data.portable_mode = ini.GetBool(L"config", L"portable_mode", portable_mode_default);
 
-    //执行一次保存操作，以检查当前目录是否有写入权限
+    // 실행 파일 디렉터리에 쓰기 권한이 있는지 확인하기 위해 저장 시도
     m_module_dir_writable = ini.Save();
 
-    if (m_module_dir.find(CCommon::GetTemplateDir()) != wstring::npos)      //如果当前路径是在Temp目录下，则强制将数据保存到Appdata
+    if (m_module_dir.find(CCommon::GetTemplateDir()) != wstring::npos)      // Temp 디렉터리에서 실행된 경우 안전을 위해 AppData 사용
     {
         m_module_dir_writable = false;
     }
 
-    if (!m_module_dir_writable)              //如果当前目录没有写入权限，则设置配置保存到AppData目录
+    if (!m_module_dir_writable)              // 디렉터리 쓰기 권한이 없는 경우 AppData로 폴백
     {
         m_general_data.portable_mode = false;
     }
 }
 
+/**
+ * @brief 전역 설정(포터블 모드 등)을 global_cfg.ini에 저장합니다.
+ */
 void CTrafficMonitorApp::SaveGlobalConfig()
 {
     CIniHelper ini{ m_module_dir + L"global_cfg.ini" };
@@ -964,9 +968,15 @@ BOOL CTrafficMonitorApp::InitInstance()
     m_skin_path = L".\\skins\\";
 #else
     if (m_general_data.portable_mode)
+    {
         m_config_dir = m_module_dir;
+    }
     else
+    {
         m_config_dir = m_appdata_dir;
+        // AppData 저장 모드인 경우에만 디렉터리 생성
+        CreateDirectory(m_appdata_dir.c_str(), NULL);
+    }
     m_skin_path = m_module_dir + L"skins\\";
 #endif
     //AppData里面的程序配置文件路径

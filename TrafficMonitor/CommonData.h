@@ -387,7 +387,7 @@ struct GeneralSettingData
     };
     CpuUsageAcquireMethod cpu_usage_acquire_method{};  //获取CPU利用率的方式
 
-    bool portable_mode{ false };        //便携模式，如果为true，则程序所有数据都保存到exe所在目录下，否则保存到Appdata\Romaing目录下
+    bool portable_mode{ true };         // 포터블 모드(기본값 true): 모든 데이터를 exe 실행 디렉터리에 저장 (false 시 AppData\Roaming 사용)
     int monitor_time_span{ 1000 };    // 일반 모니터링 시간 간격 (ms)
     int temperature_time_span{ 5000 }; // 하드웨어 온도 수집 간격 (ms, 기본값 5초)
 

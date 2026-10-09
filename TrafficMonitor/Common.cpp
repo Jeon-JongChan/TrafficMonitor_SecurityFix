@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "Common.h"
 #include "TrafficMonitor.h"
 
@@ -693,6 +693,11 @@ wstring CCommon::GetTemplateDir()
     return result;
 }
 
+/**
+ * @brief AppData 내 TrafficMonitor 설정 디렉터리 경로를 반환합니다.
+ * 포터블 동작 시 불필요한 폴더 생성을 방지하기 위해 디렉터리를 사전 생성하지 않습니다.
+ * @return AppData 설정 디렉터리 경로 (끝에 역슬래시 포함)
+ */
 wstring CCommon::GetAppDataConfigDir()
 {
     LPITEMIDLIST ppidl;
@@ -702,10 +707,9 @@ wstring CCommon::GetAppDataConfigDir()
         SHGetPathFromIDList(ppidl, pszAppDataPath);
         CoTaskMemFree(ppidl);
     }
-    wstring app_data_path{ pszAppDataPath };        //获取到C:/User/用户名/AppData/Roaming路径
-    CreateDirectory(app_data_path.c_str(), NULL);       //如果Roaming不存在，则创建它
+    wstring app_data_path{ pszAppDataPath };        // C:/Users/<사용자명>/AppData/Roaming 경로 획득
     app_data_path += L"\\TrafficMonitor\\";
-    CreateDirectory(app_data_path.c_str(), NULL);       //如果C:/User/用户名/AppData/Roaming/TrafficMonitor不存在，则创建它
+    // ponytail: 포터블 모드에서는 AppData 폴더가 불필요하므로 사전 CreateDirectory 호출 제거. 실제 필요 시점에 생성.
 
     return app_data_path;
 }

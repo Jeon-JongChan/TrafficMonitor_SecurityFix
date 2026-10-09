@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "CommonData.h"
 #include "CVariant.h"
 #include <set>
@@ -118,7 +118,10 @@ public:
     //获取临时文件夹的路径
     static wstring GetTemplateDir();
 
-    //获取Appdata/Local/TrafficMonitor的目录，如果不存在，则会自动创建
+    /**
+     * @brief Appdata/Roaming/TrafficMonitor 디렉터리 경로를 반환합니다.
+     * @return AppData 설정 디렉터리 경로 문자열
+     */
     static wstring GetAppDataConfigDir();
 
     //在指定位置绘制文本
