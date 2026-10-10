@@ -25,38 +25,17 @@ Set-Location $taskRoot
 
 Write-Host "[TrafficMonitor Dev Build] Target: $Configuration | $Platform" -ForegroundColor Cyan
 
-# 1. vswhere를 통한 MSBuild 탐색 (-products * 포함하여 BuildTools까지 검색)
-$msbuild = $null
-$vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+# 빌드 환경 확인 및 자동 부트스트랩 (로컬 .build\BuildTools 우선, 없을 시 최신 자동 설치)
+. "$PSScriptRoot\ensure-buildtools.ps1"
+$buildEnv = Get-BuildToolsEnvironment -AutoInstall
+$msbuild = $buildEnv.MSBuildPath
 
-if (Test-Path $vswhere) {
-    $found = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild -find "MSBuild\**\Bin\MSBuild.exe" 2>$null
-    if ($found -and (Test-Path $found)) {
-        $msbuild = $found
-    }
+if ($buildEnv.IsPortable) {
+    Write-Host "[BuildTools] 포터블 빌드 도구 사용: $($buildEnv.InstallationPath)" -ForegroundColor Green
+} else {
+    Write-Host "[BuildTools] 시스템 빌드 도구 사용: $($buildEnv.InstallationPath)" -ForegroundColor Gray
 }
 
-# 2. 일반 고정 경로 폴백 탐색
-if (-not $msbuild) {
-    $candidates = @(
-        "C:\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
-        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe",
-        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Professional\MSBuild\Current\Bin\MSBuild.exe",
-        "${env:ProgramFiles}\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
-        "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
-    )
-    foreach ($cand in $candidates) {
-        if (Test-Path $cand) {
-            $msbuild = $cand
-            break
-        }
-    }
-}
-
-if (-not $msbuild) {
-    Write-Error "[ERROR] MSBuild를 찾을 수 없습니다. Visual Studio 또는 Visual Studio Build Tools가 설치되어 있는지 확인하세요."
-    exit 1
-}
 
 Write-Host "[TrafficMonitor Dev Build] Found MSBuild: $msbuild" -ForegroundColor Green
 $slnPath = Join-Path $taskRoot "TrafficMonitor.sln"

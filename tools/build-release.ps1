@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 공식 PawnIO 라이브러리를 복원하고 전체 기능 버전을 빌드·검증·압축한다.
 .PARAMETER Platform
@@ -11,10 +11,12 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2
 $taskRoot = Split-Path $PSScriptRoot -Parent
 Set-Location $taskRoot
-$taskVsWhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
-$taskVs = & $taskVsWhere -latest -products '*' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-if (-not $taskVs) { throw 'Visual Studio C++ 빌드 도구가 필요합니다.' }
-$taskMsBuild = Join-Path $taskVs 'MSBuild\Current\Bin\MSBuild.exe'
+# C++ 빌드 환경 확인 및 자동 부트스트랩 (로컬 .build\BuildTools 우선)
+. "$PSScriptRoot\ensure-buildtools.ps1"
+$taskBuildEnv = Get-BuildToolsEnvironment -AutoInstall
+$taskVs = $taskBuildEnv.InstallationPath
+$taskMsBuild = $taskBuildEnv.MSBuildPath
+
 # 프로젝트 내부에 준비한 SDK가 있으면 전역 설치 대신 사용한다.
 $taskDotnet = if (Test-Path '.build\dotnet\dotnet.exe') { Join-Path $taskRoot '.build\dotnet\dotnet.exe' } else { 'dotnet' }
 $env:DOTNET_CLI_HOME = Join-Path $taskRoot '.build\dotnet-home'
@@ -79,7 +81,7 @@ foreach ($taskPackage in $taskAssets.libraries.PSObject.Properties | Where-Objec
         Copy-Item -Destination $taskLegalDir
 }
 if (Test-Path 'TrafficMonitor\skins') { Copy-Item 'TrafficMonitor\skins' $taskStage -Recurse }
-@'
+$readmeContent = @'
 TrafficMonitor PawnIO 보안 수정 버전
 
 CPU·메인보드·RAM 온도를 사용하려면 https://pawnio.eu/ 에서 공식 서명 PawnIO를 설치하세요.
@@ -93,11 +95,12 @@ Microsoft Visual C++ 2015-2022 재배포 패키지와 .NET Framework 4.7.2 이�
 LibreHardwareMonitor 0.9.6 (MPL-2.0): https://github.com/LibreHardwareMonitor/LibreHardwareMonitor/tree/v0.9.6
 종속성 및 각 라이선스: https://www.nuget.org/packages/LibreHardwareMonitorLib/0.9.6
 WinRing0 관련 리소스 검사는 통과했으며 실제 PC의 센서와 Defender 동작은 별도 확인이 필요합니다.
-'@ | Set-Content (Join-Path $taskStage '설치안내.txt') -Encoding UTF8
+'@
+$readmeContent | Set-Content -LiteralPath (Join-Path $taskStage '설치안내.txt') -Encoding UTF8
 
 New-Item -ItemType Directory '.build\releases' -Force | Out-Null
 $taskArchive = ".build\releases\TrafficMonitor_v1.86-pawnio.1_$Platform.zip"
 Compress-Archive -Path "$taskStage\*" -DestinationPath $taskArchive -Force
 Get-FileHash $taskArchive -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  $(Split-Path $_.Path -Leaf)" } |
-    Set-Content "$taskArchive.sha256" -Encoding ASCII
+    Set-Content -LiteralPath "$taskArchive.sha256" -Encoding ASCII
 Write-Host "빌드·검사·패키징 완료: $taskArchive"
